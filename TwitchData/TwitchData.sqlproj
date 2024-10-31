@@ -60,12 +60,22 @@
     <Folder Include="dbo\StoredProcedures" />
     <Folder Include="dbo\Functions" />
     <Folder Include="dbo\Triggers" />
-    <Folder Include="dbo\Indexes" />
     <Folder Include="dbo\Views" />
     <Folder Include="Scripts" />
+    <Folder Include="dbo\Tables" />
   </ItemGroup>
   <ItemGroup>
     <None Include="TwitchData.publish.xml" />
     <None Include="TestTwitchData.publish.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Build Include="dbo\Tables\Users.sql" />
+    <Build Include="dbo\Tables\Chats.sql" />
+    <Build Include="dbo\Tables\Warnings.sql" />
+    <Build Include="dbo\Tables\Timeouts.sql" />
+    <Build Include="dbo\Tables\Bans.sql" />
+    <Build Include="dbo\Tables\Commands.sql" />
+    <Build Include="dbo\Tables\Events.sql" />
+    <Build Include="dbo\Tables\TextToSpeechQueue.sql" />
   </ItemGroup>
 </Project>
