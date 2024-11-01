@@ -77,5 +77,10 @@
     <Build Include="dbo\Tables\Commands.sql" />
     <Build Include="dbo\Tables\Events.sql" />
     <Build Include="dbo\Tables\TextToSpeechQueue.sql" />
+    <Build Include="dbo\StoredProcedures\UpsertUser.sql" />
+    <Build Include="dbo\StoredProcedures\InsertChat.sql" />
+    <Build Include="dbo\StoredProcedures\InsertWarning.sql" />
+    <Build Include="dbo\StoredProcedures\InsertTimeOut.sql" />
+    <Build Include="dbo\StoredProcedures\InsertBan.sql" />
   </ItemGroup>
 </Project>
