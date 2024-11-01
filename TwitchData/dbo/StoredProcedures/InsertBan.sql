@@ -20,7 +20,6 @@ BEGIN
 	IF (@BanId IS NULL)
 		SELECT @BanId = BanId FROM Bans WHERE UserId = @UserId AND BannedBy = @BannedBy AND BannedReason = @BanReason AND BannedTimestampUtc = @BannedTimestampUtc;
 
-	SELECT @BanId;
-	
+	SELECT @BanId;	
 END
 GO

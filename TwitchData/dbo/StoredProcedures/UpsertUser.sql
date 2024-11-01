@@ -19,12 +19,13 @@ BEGIN
 	ON t.UserName = s.UserName
 	WHEN MATCHED AND
 	(
-		ISNULL(t.TwitchUserId, '') <> ISNULL(t.TwitchUserId, '')
-		OR 
+		ISNULL(t.TwitchUserId, '') <> ISNULL(t.TwitchUserId, '') OR 
 		ISNULL(t.LastInteractionDateTimeUtc, '1900-01-01') != ISNULL(s.InteractionDateUtc, '1900-01-01')
 	)	
 	THEN
-		UPDATE SET t.LastInteractionDateTimeUtc = @InteractionDateUtc
+		UPDATE SET 
+			t.LastInteractionDateTimeUtc = @InteractionDateUtc,
+			t.TwitchUserId = ISNULL(t.TwitchUserId, s.TwitchUserId)
 	WHEN NOT MATCHED THEN
 		INSERT (TwitchUserId, UserName, FirstInteractionDateTimeUtc, LastInteractionDateTimeUtc)
 		VALUES (s.TwitchUserId, s.UserName, @InteractionDateUtc, @InteractionDateUtc);
