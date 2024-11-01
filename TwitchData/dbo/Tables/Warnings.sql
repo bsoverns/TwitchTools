@@ -3,8 +3,8 @@
   [WarningId] INT IDENTITY(1, 1) NOT NULL,
   [UserId] INT NOT NULL,
   [WarnedBy] varchar(50) NOT NULL,
-  [WarningTimestampUtc] DATETIME NOT NULL CONSTRAINT [DF_Warnings_WarningTimestampUtc] DEFAULT GETUTCDATE(),
   [WarningReason] varchar(500) NOT NULL,
+  [WarningTimestampUtc] DATETIME NOT NULL CONSTRAINT [DF_Warnings_WarningTimestampUtc] DEFAULT GETUTCDATE(),  
   CONSTRAINT [PK_Warnings_WarningId] PRIMARY KEY CLUSTERED ([WarningId] ASC)
 );
 GO
