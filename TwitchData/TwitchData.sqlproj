@@ -90,10 +90,19 @@
     <Folder Include="dbo\Views" />
     <Folder Include="Scripts" />
     <Folder Include="dbo\Tables" />
+    <Folder Include="Scripts\UnitTests" />
+    <Folder Include="Scripts\CleanUp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="TwitchData.publish.xml" />
     <None Include="TestTwitchData.publish.xml" />
+    <None Include="Scripts\UnitTests\UpsertUser.UnitTest.sql" />
+    <None Include="Scripts\UnitTests\InsertChatAndTtsUserId.UnitTest.sql" />
+    <None Include="Scripts\UnitTests\InsertWarningUserId.UnitTest.sql" />
+    <None Include="Scripts\UnitTests\InsertTimeoutUserId.UnitTest.sql" />
+    <None Include="Scripts\UnitTests\InsertBanUserId.UnitTest.sql" />
+    <None Include="Scripts\CleanUp\CleanUpTestData.Cleanup.sql" />
+    <None Include="Scripts\UnitTests\InsertErrorTracking.UnitTest.sql" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="dbo\Tables\Users.sql" />
@@ -107,7 +116,17 @@
     <Build Include="dbo\StoredProcedures\UpsertUser.sql" />
     <Build Include="dbo\StoredProcedures\InsertChat.sql" />
     <Build Include="dbo\StoredProcedures\InsertWarning.sql" />
-    <Build Include="dbo\StoredProcedures\InsertTimeOut.sql" />
+    <Build Include="dbo\StoredProcedures\InsertTimeout.sql" />
     <Build Include="dbo\StoredProcedures\InsertBan.sql" />
+    <Build Include="dbo\Tables\ErrorTrackInfo.sql" />
+    <Build Include="dbo\StoredProcedures\InsertErrorTrackInfo.sql" />
+    <Build Include="dbo\StoredProcedures\InsertTextToSpeechQueue.sql" />
+    <None Include="Scripts\UnitTests\InsertChatAndTtsUserName.UnitTest.sql" />
+    <None Include="Scripts\UnitTests\InsertWarningUserName.UnitTest.sql" />
+    <None Include="Scripts\UnitTests\InsertTimeoutUserName.UnitTest.sql" />
+    <None Include="Scripts\UnitTests\InsertBanUserName.UnitTest.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <PostDeploy Include="Scripts\PostDeployment.sql" />
   </ItemGroup>
 </Project>
