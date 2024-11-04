@@ -17,9 +17,12 @@ BEGIN
 		@TestChatMessage VARCHAR(500) = 'This is a test message for the UserId test case on ' + FORMAT(GETUTCDATE(),'yyyy-MM-dd HH:mm:ss'),
 		@TestIsCommand BIT = 0,
 		@TestInteractionDateUtc DATETIME = GETUTCDATE()
+	DECLARE @Result TABLE (ChatId INT);
 
-	EXEC [dbo].[InsertChat] @UserId = @TestUserId, @ChatMessage = @TestChatMessage, @IsCommand = @TestIsCommand, @InteractionDateUtc = @TestInteractionDateUtc, @ChatId = @ChatId OUTPUT;
-	PRINT @ChatId;
+	INSERT INTO @Result
+	EXEC [dbo].[InsertChat] @UserId = @TestUserId, @ChatMessage = @TestChatMessage, @IsCommand = @TestIsCommand, @InteractionDateUtc = @TestInteractionDateUtc;
+
+	SELECT @ChatId = ChatId FROM @Result;	
 
 	IF (@ChatId IS NULL)	
 		PRINT ('Fail: Chat was not created for UserId test case');
@@ -29,8 +32,15 @@ BEGIN
 	END
 
 	--Test Case 2: Insert a chat Tts message for default UserId
+	DECLARE @ResultTts TABLE (TtsId INT);
+
 	IF (@ChatId IS NOT NULL)
-		EXEC [dbo].[InsertTextToSpeechQueue] @ChatId, @TtsId = @TtsId OUTPUT;
+	BEGIN
+		INSERT INTO @ResultTts
+		EXEC [dbo].[InsertTextToSpeechQueue] @ChatId;
+
+		SELECT @TtsId = TtsId FROM @ResultTts;
+	END
 
 	IF (@TtsId IS NULL)
 		PRINT ('Fail: Chat Tts was not created for UserId test case');

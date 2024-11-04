@@ -14,8 +14,12 @@ BEGIN
 		@TestWarnedBy VARCHAR(50) = 'bsoverns',
 		@TestWarningReason VARCHAR(500) = 'This is a test warning for UserId',
 		@TestWarningTimestampUtc DATETIME = GETUTCDATE();
+	DECLARE @Result TABLE (WarningId INT);
 
-	EXEC [dbo].[InsertWarning] @UserId = @TestUserId, @WarnedBy = @TestWarnedBy, @WarningReason = @TestWarningReason, @WarningTimestampUtc = @TestWarningTimestampUtc, @WarningId = @WarningId OUTPUT;
+	INSERT INTO @Result
+	EXEC [dbo].[InsertWarning] @UserId = @TestUserId, @WarnedBy = @TestWarnedBy, @WarningReason = @TestWarningReason, @WarningTimestampUtc = @TestWarningTimestampUtc;
+
+	SELECT @WarningId = WarningId FROM @Result;
 
 	IF (@WarningId IS NULL)
 		PRINT ('Fail: Warning was not created for UserId test case');

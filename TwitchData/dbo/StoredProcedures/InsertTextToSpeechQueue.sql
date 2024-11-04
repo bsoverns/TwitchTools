@@ -1,12 +1,13 @@
 ﻿CREATE PROCEDURE [dbo].[InsertTextToSpeechQueue]
 (
-	@ChatId INT,
-	@TtsId INT NULL OUTPUT
+	@ChatId INT
 )
 AS
 BEGIN
+	SET NOCOUNT ON;
 	BEGIN TRY
 		BEGIN TRANSACTION
+			DECLARE @TtsId INT;
 
 			INSERT INTO [dbo].[TextToSpeechQueue] ([ChatId])
 			VALUES (@ChatId);

@@ -13,8 +13,12 @@ BEGIN
 		@TestTwitchUserId NVARCHAR(255) = '1234567890',
 		@TestUserName NVARCHAR(255) = 'TestUser',
 		@TestTimestampUtc DATETIME = GETUTCDATE();
+	DECLARE @Result TABLE (UserId INT);
 
-	EXEC [dbo].[UpsertUser] @TwitchUserId = @TestTwitchUserId, @UserName = @TestUserName, @InteractionDateUtc = @TestTimestampUtc, @UserId = @UserId OUTPUT;
+	INSERT INTO @Result
+	EXEC [dbo].[UpsertUser] @TwitchUserId = @TestTwitchUserId, @UserName = @TestUserName, @InteractionDateUtc = @TestTimestampUtc;
+
+	SELECT @UserId = UserId FROM @Result;
 
 	IF (@UserId IS NULL)
 		PRINT ('Fail: User was not created');

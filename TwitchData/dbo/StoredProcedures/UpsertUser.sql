@@ -1,52 +1,55 @@
-﻿CREATE PROCEDURE [dbo].[UpsertUser]
+﻿CREATE PROCEDURE [dbo].[UpsertUser] 
 (
     @TwitchUserId VARCHAR(50) = NULL,
     @UserName VARCHAR(50),
-    @InteractionDateUtc DATETIME NULL,
-    @UserId INT NULL OUTPUT
+    @InteractionDateUtc DATETIME = NULL
 )
 AS
 BEGIN
+    SET NOCOUNT ON;
+
     BEGIN TRY
-        BEGIN TRANSACTION
-            IF (@UserName IS NULL)
-            BEGIN
-                EXEC [dbo].[InsertErrorTrackInfo] 'UpsertUser', 'UserName cannot be NULL.';                
-                RETURN;
-            END
-                    
-            IF (@InteractionDateUtc IS NULL)
-                SET @InteractionDateUtc = GETUTCDATE();
+        BEGIN TRANSACTION;
 
-            DECLARE @UserTable TABLE (UserId INT);
+        IF (@UserName IS NULL)
+        BEGIN
+            EXEC [dbo].[InsertErrorTrackInfo] 'UpsertUser', 'UserName cannot be NULL.';                
+            RETURN;
+        END
 
-            MERGE INTO [dbo].[Users] AS t
-            USING 
-            (
-                SELECT @TwitchUserId AS TwitchUserId, @UserName AS UserName, @InteractionDateUtc AS InteractionDateUtc
-            ) AS s
-            ON t.UserName = s.UserName
-            WHEN MATCHED AND
-            (
-                ISNULL(t.TwitchUserId, '') <> ISNULL(t.TwitchUserId, '') OR 
-                ISNULL(t.LastInteractionDateTimeUtc, '1900-01-01') != ISNULL(s.InteractionDateUtc, '1900-01-01')
-            )   
-            THEN
-                UPDATE SET 
-                    t.LastInteractionDateTimeUtc = @InteractionDateUtc,
-                    t.TwitchUserId = ISNULL(t.TwitchUserId, s.TwitchUserId)
-            WHEN NOT MATCHED THEN
-                INSERT (TwitchUserId, UserName, FirstInteractionDateTimeUtc, LastInteractionDateTimeUtc)
-                VALUES (s.TwitchUserId, s.UserName, @InteractionDateUtc, @InteractionDateUtc)
-            OUTPUT inserted.UserId INTO @UserTable;
+        IF (@InteractionDateUtc IS NULL)
+            SET @InteractionDateUtc = GETUTCDATE();
 
-            SELECT @UserId = UserId FROM @UserTable;
+        MERGE INTO [dbo].[Users] AS t
+        USING 
+        (
+            SELECT @TwitchUserId AS TwitchUserId, @UserName AS UserName, @InteractionDateUtc AS InteractionDateUtc
+        ) AS s
+        ON t.UserName = s.UserName
+        WHEN MATCHED AND
+        (
+            ISNULL(t.TwitchUserId, '') <> ISNULL(s.TwitchUserId, '') OR 
+            ISNULL(t.LastInteractionDateTimeUtc, '1900-01-01') != ISNULL(s.InteractionDateUtc, '1900-01-01')
+        )   
+        THEN
+            UPDATE SET 
+                t.LastInteractionDateTimeUtc = @InteractionDateUtc,
+                t.TwitchUserId = ISNULL(t.TwitchUserId, s.TwitchUserId)
+        WHEN NOT MATCHED THEN
+            INSERT (TwitchUserId, UserName, FirstInteractionDateTimeUtc, LastInteractionDateTimeUtc)
+            VALUES (s.TwitchUserId, s.UserName, @InteractionDateUtc, @InteractionDateUtc);
 
-            IF (@UserId IS NULL)
-                SELECT @UserId = UserId FROM [dbo].[Users] WHERE UserName = @UserName;
+        DECLARE @UserId INT;
 
-            SELECT @UserId;
-        COMMIT TRANSACTION
+        SELECT TOP 1 @UserId = UserId 
+        FROM [dbo].[Users] 
+        WHERE UserName = @UserName
+        OR TwitchUserId = @TwitchUserId
+		ORDER BY LastInteractionDateTimeUtc DESC;
+
+        SELECT @UserId AS UserId;
+
+        COMMIT TRANSACTION;
     END TRY
     BEGIN CATCH
         ROLLBACK TRANSACTION;

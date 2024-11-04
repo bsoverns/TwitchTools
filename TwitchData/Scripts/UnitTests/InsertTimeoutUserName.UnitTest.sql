@@ -16,8 +16,12 @@ BEGIN
 		@TestTimeoutReason VARCHAR(500) = 'This is a test timeout UserName',
 		@TestTimeoutDurationInMinutes INT = 1,
 		@TestTimeoutTimestampUtc DATETIME = GETUTCDATE();
+	DECLARE @Result TABLE (TimeoutId INT);
 
-	EXEC [dbo].[InsertTimeout] @TwitchUserId = @TestTwitchUserId, @UserName = @TestUserName, @TimeoutBy = @TestTimeoutBy, @TimeoutReason = @TestTimeoutReason, @TimeoutDurationInMinutes = @TestTimeoutDurationInMinutes, @TimeoutTimestampUtc = @TestTimeoutTimestampUtc, @TimeoutId = @TimeoutId OUTPUT;
+	INSERT INTO @Result
+	EXEC [dbo].[InsertTimeout] @TwitchUserId = @TestTwitchUserId, @UserName = @TestUserName, @TimeoutBy = @TestTimeoutBy, @TimeoutReason = @TestTimeoutReason, @TimeoutDurationInMinutes = @TestTimeoutDurationInMinutes, @TimeoutTimestampUtc = @TestTimeoutTimestampUtc;
+
+	SELECT @TimeoutId = TimeoutId FROM @Result;
 
 	IF (@TimeoutId IS NULL)
 		PRINT ('Fail: Timeout was not created for UserName test case');

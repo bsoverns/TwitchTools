@@ -6,17 +6,22 @@
 AS
 BEGIN
 	BEGIN TRY
+		SET NOCOUNT ON;
 		BEGIN TRANSACTION
-		DECLARE @ErrorTrackId INT;
+			DECLARE @ErrorTrackInfoId INT;
 
-		IF (@ProcessName IS NULL)
-			THROW 51000, 'ProcessName cannot be NULL.', 1;
+			IF (@ProcessName IS NULL)
+				THROW 51000, 'ProcessName cannot be NULL.', 1;
 
-		IF (@ErrorDescription IS NULL)
-			THROW 51000, 'ErrorDescription cannot be NULL.', 1;
+			IF (@ErrorDescription IS NULL)
+				THROW 51000, 'ErrorDescription cannot be NULL.', 1;
 
-		INSERT INTO ErrorTrackInfo (ProcessName, ErrorDescription)
-		VALUES (@ProcessName, @ErrorDescription);
+			INSERT INTO ErrorTrackInfo (ProcessName, ErrorDescription)
+			VALUES (@ProcessName, @ErrorDescription);
+
+			SET @ErrorTrackInfoId = SCOPE_IDENTITY();
+
+			SELECT @ErrorTrackInfoId;
 
 		COMMIT TRANSACTION
 	END TRY

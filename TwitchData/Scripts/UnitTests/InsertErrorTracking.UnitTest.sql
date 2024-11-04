@@ -9,12 +9,17 @@
 IF (DB_NAME() = 'TestTwitchData')
 BEGIN	
 
-	DECLARE @TestProcessName VARCHAR(50) = 'UnitTest',
-		@TestErrorDescription VARCHAR(500) = 'This is a unit test for the error tracking.'
-	
+	DECLARE @ErrorTrackInfoId INT,
+		@TestProcessName VARCHAR(50) = 'UnitTest',
+		@TestErrorDescription VARCHAR(500) = 'This is a unit test for the error tracking.';
+	DECLARE @Result TABLE (ErrorTrackInfoId INT);
+
+	INSERT INTO @Result	
 	EXEC [dbo].[InsertErrorTrackInfo] @ProcessName = @TestProcessName, @ErrorDescription = @TestErrorDescription;
+
+	SELECT @ErrorTrackInfoId = ErrorTrackInfoId FROM @Result;
 	
-	IF EXISTS(SELECT 1 FROM ErrorTrackInfo WHERE ProcessName = @TestProcessName AND ErrorDescription = @TestErrorDescription)
+	IF (@ErrorTrackInfoId IS NULL)
 		PRINT ('Fail: Error was not created for test case');
 
 	ELSE

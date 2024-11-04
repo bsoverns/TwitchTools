@@ -14,7 +14,12 @@ BEGIN
 		@TestBanReason VARCHAR(500) = 'This is a test ban for UserId',
 		@TestBannedTimestampUtc DATETIME = GETUTCDATE();
 
-	EXEC [dbo].[InsertBan] @UserId = @TestUserId, @BannedBy = @TestBannedBy, @BanReason = @TestBanReason, @BannedTimestampUtc = @TestBannedTimestampUtc, @BanId = @BanId OUTPUT;
+	DECLARE @Result TABLE (BanId INT);
+
+	INSERT INTO @Result
+	EXEC [dbo].[InsertBan] @UserId = @TestUserId, @BannedBy = @TestBannedBy, @BanReason = @TestBanReason, @BannedTimestampUtc = @TestBannedTimestampUtc;
+
+	SELECT @BanId = BanId FROM @Result;
 
 	IF (@BanId IS NULL)
 		PRINT ('Fail: Ban was not created for UserId test case');

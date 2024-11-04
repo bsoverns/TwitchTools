@@ -52,9 +52,11 @@ END;
 GO
 
 /*
-SELECT * FROM Timeouts
-SELECT * FROM Chats
 SELECT * FROM Users
+SELECT * FROM Chats
+SELECT * FROM TextToSpeechQueue
 SELECT * FROM Warnings
+SELECT * FROM Timeouts
+SELECT * FROM Bans
 SELECT * FROM ErrorTrackInfo
 */
