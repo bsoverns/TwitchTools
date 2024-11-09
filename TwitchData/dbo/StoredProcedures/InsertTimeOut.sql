@@ -1,61 +1,66 @@
 ﻿CREATE PROCEDURE [dbo].[InsertTimeout]
 (
-	@UserId INT = NULL,
-	@TwitchUserId VARCHAR(50) = NULL,
-	@UserName VARCHAR(50) = NULL,
-	@TimeoutBy VARCHAR(50),
-	@TimeoutReason VARCHAR(500),
-	@TimeoutDurationInMinutes INT,
-	@TimeoutTimestampUtc DATETIME = NULL,
-	@TimeoutId INT NULL OUTPUT
+    @UserId INT = NULL,
+    @TwitchUserId VARCHAR(50) = NULL,
+    @UserName VARCHAR(50) = NULL,
+    @TimeoutBy VARCHAR(50),
+    @TimeoutReason VARCHAR(500),
+    @TimeoutDurationInMinutes INT,
+    @TimeoutTimestampUtc DATETIME = NULL
 )
 AS
 BEGIN
-	BEGIN TRY
-	BEGIN TRANSACTION
-		IF (@UserId IS NULL AND @TwitchUserId IS NULL AND @UserName IS NULL)
-		BEGIN
-			EXEC [dbo].[InsertErrorTrackInfo] 'InsertTimeout', 'UserId, TwitchUserId, and UserName cannot be NULL.';				
-			RETURN;
-		END
+    SET NOCOUNT ON;
 
-		IF (@UserId IS NULL AND (@TwitchUserId IS NOT NULL OR @UserName IS NOT NULL))
-		BEGIN
-			IF (@TwitchUserId IS NULL OR @UserName IS NULL)		
-			BEGIN
-				EXEC [dbo].[InsertErrorTrackInfo] 'InsertTimeout', 'TwitchUserId and UserName cannot be NULL.';
-			END							
+    IF (@UserId IS NULL AND @TwitchUserId IS NULL AND @UserName IS NULL)
+    BEGIN
+        EXEC [dbo].[InsertErrorTrackInfo] 'InsertTimeout', 'UserId, TwitchUserId, and UserName cannot all be NULL.';                
+        RETURN;
+    END
 
-			EXEC [dbo].[UpsertUser] @TwitchUserId = @TwitchUserId, @UserName = @UserName, @InteractionDateUtc = @TimeoutTimestampUtc, @UserId = @UserId OUTPUT;
+    BEGIN TRY
+        BEGIN TRANSACTION;
 
-			IF (@UserId IS NULL)
-			BEGIN
-				EXEC [dbo].[InsertErrorTrackInfo] 'InsertTimeout', 'UserId cannot be NULL.';
-				RETURN; 
-			END
-		END;
+        IF (@UserId IS NULL)
+        BEGIN
+            EXEC [dbo].[UpsertUser] 
+                @TwitchUserId = @TwitchUserId, 
+                @UserName = @UserName, 
+                @InteractionDateUtc = @TimeoutTimestampUtc, 
+                @UserId = @UserId OUTPUT;
 
-		IF (@TimeoutTimestampUtc IS NULL)
-			SET @TimeoutTimestampUtc = GETUTCDATE();
+            IF (@UserId IS NULL)
+            BEGIN
+                EXEC [dbo].[InsertErrorTrackInfo] 'InsertTimeout', 'Failed to upsert user. UserId cannot be NULL.';
+                ROLLBACK TRANSACTION;
+                RETURN;
+            END
+        END
 
-		INSERT INTO Timeouts (UserId, TimeoutBy, TimeoutReason, TimeoutDurationInMinutes, TimeoutTimestampUtc)
-		VALUES (@UserId, @TimeoutBy, @TimeoutReason, @TimeoutDurationInMinutes, @TimeoutTimestampUtc);
+        IF (@TimeoutTimestampUtc IS NULL)
+            SET @TimeoutTimestampUtc = GETUTCDATE();
+                    
+        DECLARE @TimeoutId INT;
+        INSERT INTO Timeouts (UserId, TimeoutBy, TimeoutReason, TimeoutDurationInMinutes, TimeoutTimestampUtc)
+        VALUES (@UserId, @TimeoutBy, @TimeoutReason, @TimeoutDurationInMinutes, @TimeoutTimestampUtc);
 
-		SET @TimeoutId = SCOPE_IDENTITY();
+        SET @TimeoutId = SCOPE_IDENTITY();
 
-		IF (@TimeoutId IS NULL)
-			SELECT @TimeoutId = TimeoutId FROM Timeouts WHERE UserId = @UserId AND TimeoutBy = @TimeoutBy AND TimeoutReason = @TimeoutReason AND TimeoutDurationInMinutes = @TimeoutDurationInMinutes AND TimeoutTimestampUtc = @TimeoutTimestampUtc;
+        SELECT @TimeoutId AS TimeoutId;
 
-		SELECT @TimeoutId;
-		COMMIT TRANSACTION
-	END TRY
-	BEGIN CATCH
-	ROLLBACK TRANSACTION;
-		DECLARE @ErrorMessage NVARCHAR(4000) = ERROR_MESSAGE();
-		DECLARE @ErrorSeverity INT = ERROR_SEVERITY();
-		DECLARE @ErrorState INT = ERROR_STATE();
-		RAISERROR (@ErrorMessage, @ErrorSeverity, @ErrorState);
-		EXEC [dbo].[InsertErrorTrackInfo] 'InsertTimeout', @ErrorMessage;
-	END CATCH
+        COMMIT TRANSACTION;
+    END TRY
+    BEGIN CATCH
+        IF @@TRANCOUNT > 0
+        BEGIN
+            ROLLBACK TRANSACTION;
+        END
+
+        DECLARE @ErrorMessage NVARCHAR(4000) = ERROR_MESSAGE();
+        DECLARE @ErrorSeverity INT = ERROR_SEVERITY();
+        DECLARE @ErrorState INT = ERROR_STATE();
+        EXEC [dbo].[InsertErrorTrackInfo] 'InsertTimeout', @ErrorMessage;
+        RAISERROR (@ErrorMessage, @ErrorSeverity, @ErrorState);
+    END CATCH
 END
 GO
