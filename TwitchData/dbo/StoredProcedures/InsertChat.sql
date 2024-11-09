@@ -12,29 +12,26 @@ BEGIN
     SET NOCOUNT ON;
 
     DECLARE @ChatId INT;
-    DECLARE @UserTable TABLE (UserId INT);
 
     IF (@UserId IS NULL AND @TwitchUserId IS NULL AND @UserName IS NULL)
     BEGIN
-        EXEC [dbo].[InsertErrorTrackInfo] 'InsertChat', 'UserId, TwitchUserId, and UserName cannot be NULL.';                
+        EXEC [dbo].[InsertErrorTrackInfo] 'InsertChat', 'UserId, TwitchUserId, and UserName cannot all be NULL.';                
         RETURN;
     END
-
-    IF (@TwitchUserId IS NULL AND @UserName IS NULL)
-    BEGIN
-        EXEC [dbo].[InsertErrorTrackInfo] 'InsertChat', 'TwitchUserId and UserName cannot be NULL.';
-        RETURN; 
-    END
-
-    INSERT INTO @UserTable
-    EXEC [dbo].[UpsertUser] @TwitchUserId = @TwitchUserId, @UserName = @UserName, @InteractionDateUtc = @InteractionDateUtc;
-
-    SELECT @UserId = UserId FROM @UserTable;
 
     IF (@UserId IS NULL)
     BEGIN
-        EXEC [dbo].[InsertErrorTrackInfo] 'InsertChat', 'UserId cannot be NULL.';
-        RETURN;
+        EXEC [dbo].[UpsertUser] 
+            @TwitchUserId = @TwitchUserId, 
+            @UserName = @UserName, 
+            @InteractionDateUtc = @InteractionDateUtc, 
+            @UserId = @UserId OUTPUT;
+
+        IF (@UserId IS NULL)
+        BEGIN
+            EXEC [dbo].[InsertErrorTrackInfo] 'InsertChat', 'Failed to upsert user. UserId cannot be NULL.';
+            RETURN;
+        END
     END
 
     IF (@InteractionDateUtc IS NULL)
@@ -46,7 +43,7 @@ BEGIN
 
         SET @ChatId = SCOPE_IDENTITY();
 
-        SELECT @ChatId;
+        SELECT @ChatId AS ChatId;
     END TRY
     BEGIN CATCH
         DECLARE @ErrorMessage NVARCHAR(4000) = ERROR_MESSAGE();

@@ -5,32 +5,44 @@
 )
 AS
 BEGIN
-	BEGIN TRY
-		SET NOCOUNT ON;
-		BEGIN TRANSACTION
-			DECLARE @ErrorTrackInfoId INT;
+    SET NOCOUNT ON;
 
-			IF (@ProcessName IS NULL)
-				THROW 51000, 'ProcessName cannot be NULL.', 1;
+    IF (@ProcessName IS NULL)
+    BEGIN
+        RAISERROR('ProcessName cannot be NULL.', 16, 1);
+        RETURN;
+    END
 
-			IF (@ErrorDescription IS NULL)
-				THROW 51000, 'ErrorDescription cannot be NULL.', 1;
+    IF (@ErrorDescription IS NULL)
+    BEGIN
+        RAISERROR('ErrorDescription cannot be NULL.', 16, 1);
+        RETURN;
+    END
 
-			INSERT INTO ErrorTrackInfo (ProcessName, ErrorDescription)
-			VALUES (@ProcessName, @ErrorDescription);
+    BEGIN TRY
+        BEGIN TRANSACTION;
 
-			SET @ErrorTrackInfoId = SCOPE_IDENTITY();
+        DECLARE @ErrorTrackInfoId INT;
 
-			SELECT @ErrorTrackInfoId;
+        INSERT INTO ErrorTrackInfo (ProcessName, ErrorDescription)
+        VALUES (@ProcessName, @ErrorDescription);
 
-		COMMIT TRANSACTION
-	END TRY
-	BEGIN CATCH
-		ROLLBACK TRANSACTION;
-		DECLARE @ErrorMessage NVARCHAR(4000) = ERROR_MESSAGE();
-		DECLARE @ErrorSeverity INT = ERROR_SEVERITY();
-		DECLARE @ErrorState INT = ERROR_STATE();
-		RAISERROR (@ErrorMessage, @ErrorSeverity, @ErrorState);
-	END CATCH
+        SET @ErrorTrackInfoId = SCOPE_IDENTITY();
+
+        SELECT @ErrorTrackInfoId AS ErrorTrackInfoId;
+
+        COMMIT TRANSACTION;
+    END TRY
+    BEGIN CATCH
+        IF @@TRANCOUNT > 0
+        BEGIN
+            ROLLBACK TRANSACTION;
+        END
+
+        DECLARE @ErrorMessage NVARCHAR(4000) = ERROR_MESSAGE();
+        DECLARE @ErrorSeverity INT = ERROR_SEVERITY();
+        DECLARE @ErrorState INT = ERROR_STATE();
+        RAISERROR (@ErrorMessage, @ErrorSeverity, @ErrorState);
+    END CATCH
 END;
 GO

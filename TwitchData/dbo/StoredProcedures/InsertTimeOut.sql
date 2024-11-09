@@ -12,68 +12,55 @@ AS
 BEGIN
     SET NOCOUNT ON;
 
+    IF (@UserId IS NULL AND @TwitchUserId IS NULL AND @UserName IS NULL)
+    BEGIN
+        EXEC [dbo].[InsertErrorTrackInfo] 'InsertTimeout', 'UserId, TwitchUserId, and UserName cannot all be NULL.';                
+        RETURN;
+    END
+
     BEGIN TRY
-        -- Begin the transaction for the core operation only
         BEGIN TRANSACTION;
 
-        DECLARE @TimeoutId INT;
-        DECLARE @UserTable TABLE (UserId INT);
-
-        IF (@UserId IS NULL AND @TwitchUserId IS NULL AND @UserName IS NULL)
+        IF (@UserId IS NULL)
         BEGIN
-            EXEC [dbo].[InsertErrorTrackInfo] 'InsertChat', 'UserId, TwitchUserId, and UserName cannot be NULL.';                
-            RETURN;
+            EXEC [dbo].[UpsertUser] 
+                @TwitchUserId = @TwitchUserId, 
+                @UserName = @UserName, 
+                @InteractionDateUtc = @TimeoutTimestampUtc, 
+                @UserId = @UserId OUTPUT;
+
+            IF (@UserId IS NULL)
+            BEGIN
+                EXEC [dbo].[InsertErrorTrackInfo] 'InsertTimeout', 'Failed to upsert user. UserId cannot be NULL.';
+                ROLLBACK TRANSACTION;
+                RETURN;
+            END
         END
-
-        IF (@TwitchUserId IS NULL AND @UserName IS NULL)
-        BEGIN
-            EXEC [dbo].[InsertErrorTrackInfo] 'InsertChat', 'TwitchUserId and UserName cannot be NULL.';
-            RETURN; 
-        END
-
-        INSERT INTO @UserTable
-        EXEC [dbo].[UpsertUser] @TwitchUserId = @TwitchUserId, @UserName = @UserName, @InteractionDateUtc = @TimeoutTimestampUtc;
-
-        SELECT @UserId = UserId FROM @UserTable;
 
         IF (@TimeoutTimestampUtc IS NULL)
             SET @TimeoutTimestampUtc = GETUTCDATE();
-
-        -- Insert into Timeouts
+                    
+        DECLARE @TimeoutId INT;
         INSERT INTO Timeouts (UserId, TimeoutBy, TimeoutReason, TimeoutDurationInMinutes, TimeoutTimestampUtc)
         VALUES (@UserId, @TimeoutBy, @TimeoutReason, @TimeoutDurationInMinutes, @TimeoutTimestampUtc);
 
         SET @TimeoutId = SCOPE_IDENTITY();
 
-        -- If TimeoutId is null, use an alternative lookup
-        IF (@TimeoutId IS NULL)
-            SELECT @TimeoutId = TimeoutId 
-            FROM Timeouts 
-            WHERE UserId = @UserId 
-                AND TimeoutBy = @TimeoutBy 
-                AND TimeoutReason = @TimeoutReason 
-                AND TimeoutDurationInMinutes = @TimeoutDurationInMinutes 
-                AND TimeoutTimestampUtc = @TimeoutTimestampUtc;
+        SELECT @TimeoutId AS TimeoutId;
 
-        -- Return the TimeoutId
-        SELECT @TimeoutId;
-
-        -- Commit the transaction after successful operations
         COMMIT TRANSACTION;
     END TRY
     BEGIN CATCH
-        -- Instead of rolling back, handle the error more gracefully
         IF @@TRANCOUNT > 0
         BEGIN
             ROLLBACK TRANSACTION;
         END
 
-        -- Capture and raise the error
         DECLARE @ErrorMessage NVARCHAR(4000) = ERROR_MESSAGE();
         DECLARE @ErrorSeverity INT = ERROR_SEVERITY();
         DECLARE @ErrorState INT = ERROR_STATE();
-        RAISERROR (@ErrorMessage, @ErrorSeverity, @ErrorState);
         EXEC [dbo].[InsertErrorTrackInfo] 'InsertTimeout', @ErrorMessage;
+        RAISERROR (@ErrorMessage, @ErrorSeverity, @ErrorState);
     END CATCH
-END;
+END
 GO

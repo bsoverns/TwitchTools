@@ -8,24 +8,37 @@
 
 IF (DB_NAME() = 'TestTwitchData')
 BEGIN	
-	DECLARE @WarningId INT,
-		@TestTwitchUserId NVARCHAR(255) = '1234567892',
+	PRINT('Running InsertWarning UnitTest for UserName - STARTED');
+
+	DECLARE 
+		@WarningId INT = NULL,
+		@TestTwitchUserId NVARCHAR(255) = NULL,
 		@TestUserName NVARCHAR(255) = 'TestUserWarning',
-		@TestChatMessage VARCHAR(500) = 'This is a test message on ' + FORMAT(GETUTCDATE(),'yyyy-MM-dd HH:mm:ss'),
 		@TestWarnedBy VARCHAR(50) = 'bsoverns',
 		@TestWarningReason VARCHAR(500) = 'This is a test warning for UserName',
 		@TestWarningTimestampUtc DATETIME = GETUTCDATE();
-	DECLARE @Result TABLE (WarningId INT);
 
-	INSERT INTO @Result
-	EXEC [dbo].[InsertWarning] @TwitchUserId = @TestTwitchUserId, @UserName = @TestUserName, @WarnedBy = @TestWarnedBy, @WarningReason = @TestWarningReason, @WarningTimestampUtc = @TestWarningTimestampUtc;
+	EXEC [dbo].[InsertWarning] 
+		@TwitchUserId = @TestTwitchUserId, 
+		@UserName = @TestUserName, 
+		@WarnedBy = @TestWarnedBy, 
+		@WarningReason = @TestWarningReason, 
+		@WarningTimestampUtc = @TestWarningTimestampUtc;
 
-	SELECT @WarningId = WarningId FROM @Result;
+	SELECT TOP 1 @WarningId = WarningId 
+	FROM [dbo].[Warnings]
+	WHERE 
+		UserId = (SELECT TOP 1 UserId FROM [dbo].[Users] WHERE (TwitchUserId = @TestTwitchUserId OR @TestTwitchUserId IS NULL) AND UserName = @TestUserName)
+		AND WarnedBy = @TestWarnedBy
+		AND WarningReason = @TestWarningReason
+		AND WarningTimestampUtc = @TestWarningTimestampUtc
+	ORDER BY WarningTimestampUtc DESC;
 
 	IF (@WarningId IS NULL)
 		PRINT ('Fail: Warning was not created for UserName test case');
-
 	ELSE
 		PRINT ('Pass: Warning was created for UserName test case');
+
+	PRINT('Running InsertWarning UnitTest for UserName - COMPLETED');
 END;
 GO

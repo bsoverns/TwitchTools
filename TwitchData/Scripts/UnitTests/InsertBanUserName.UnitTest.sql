@@ -1,31 +1,44 @@
 ﻿/****************************************************************************************
 *  Created by: BS
 *  Purpose: This script is used to test the InsertBan stored procedure.
-*  Created on: 2024--02
-*  Last Modified on: 2024--02
+*  Created on: 2024-11-02
+*  Last Modified on: 2024-11-02
 *
 ****************************************************************************************/
 
 IF (DB_NAME() = 'TestTwitchData')
 BEGIN	
-	DECLARE @BanId INT,
-		@TestTwitchUserId VARCHAR(50) = '234567894',
+	PRINT('Running InsertBan UnitTest for UserName - STARTED');
+
+	DECLARE 
+		@BanId INT = NULL,
+		@TestTwitchUserId VARCHAR(50) = NULL,
 		@TestUserName VARCHAR(50) = 'TestUserBan',
 		@TestBannedBy VARCHAR(50) = 'bsoverns',
 		@TestBanReason VARCHAR(500) = 'This is a test ban for UserName',
 		@TestBannedTimestampUtc DATETIME = GETUTCDATE();
 
-	DECLARE @Result TABLE (BanId INT);
+	EXEC [dbo].[InsertBan] 
+		@TwitchUserId = @TestTwitchUserId, 
+		@UserName = @TestUserName, 
+		@BannedBy = @TestBannedBy, 
+		@BanReason = @TestBanReason, 
+		@BannedTimestampUtc = @TestBannedTimestampUtc;
 
-	INSERT INTO @Result
-	EXEC [dbo].[InsertBan] @TwitchUserId = @TestTwitchUserId, @UserName = @TestUserName, @BannedBy = @TestBannedBy, @BanReason = @TestBanReason, @BannedTimestampUtc = @TestBannedTimestampUtc;
-
-	SELECT @BanId = BanId FROM @Result;
+	SELECT TOP 1 @BanId = BanId 
+	FROM [dbo].[Bans]
+	WHERE 
+		UserId = (SELECT TOP 1 UserId FROM [dbo].[Users] WHERE (TwitchUserId = @TestTwitchUserId OR @TestTwitchUserId IS NULL) AND UserName = @TestUserName)
+		AND BannedBy = @TestBannedBy
+		AND BannedReason = @TestBanReason
+		AND BannedTimestampUtc = @TestBannedTimestampUtc
+	ORDER BY BannedTimestampUtc DESC;
 
 	IF (@BanId IS NULL)
 		PRINT ('Fail: Ban was not created for UserName test case');
-
 	ELSE
 		PRINT ('Pass: Ban was created for UserName test case');
+
+	PRINT('Running InsertBan UnitTest for UserName - COMPLETED');
 END;
 GO

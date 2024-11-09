@@ -10,41 +10,46 @@
 AS
 BEGIN
     SET NOCOUNT ON;
-    
-    DECLARE @UserTable TABLE (UserId INT);
 
+    -- Validate input parameters
     IF (@UserId IS NULL AND @TwitchUserId IS NULL AND @UserName IS NULL)
     BEGIN
-        EXEC [dbo].[InsertErrorTrackInfo] 'InsertChat', 'UserId, TwitchUserId, and UserName cannot be NULL.';                
+        EXEC [dbo].[InsertErrorTrackInfo] 'InsertWarning', 'UserId, TwitchUserId, and UserName cannot all be NULL.';                
         RETURN;
     END
 
-    IF (@TwitchUserId IS NULL AND @UserName IS NULL)
+    IF (@UserId IS NULL)
     BEGIN
-        EXEC [dbo].[InsertErrorTrackInfo] 'InsertChat', 'TwitchUserId and UserName cannot be NULL.';
-        RETURN; 
+        EXEC [dbo].[UpsertUser] 
+            @TwitchUserId = @TwitchUserId, 
+            @UserName = @UserName, 
+            @InteractionDateUtc = @WarningTimestampUtc, 
+            @UserId = @UserId OUTPUT;
+
+        IF (@UserId IS NULL)
+        BEGIN
+            EXEC [dbo].[InsertErrorTrackInfo] 'InsertWarning', 'Failed to upsert user. UserId cannot be NULL.';
+            RETURN;
+        END
     END
 
-    INSERT INTO @UserTable
-    EXEC [dbo].[UpsertUser] @TwitchUserId = @TwitchUserId, @UserName = @UserName, @InteractionDateUtc = @WarningTimestampUtc;
+    IF (@WarningTimestampUtc IS NULL)
+        SET @WarningTimestampUtc = GETUTCDATE();
 
-    SELECT @UserId = UserId FROM @UserTable;
-    
     BEGIN TRY
-        BEGIN TRANSACTION    
-            DECLARE @WarningId INT;
+        BEGIN TRANSACTION;
+        
+        DECLARE @WarningId INT;
 
-            IF (@WarningTimestampUtc IS NULL)
-                SET @WarningTimestampUtc = GETUTCDATE();
+        -- Insert warning record
+        INSERT INTO Warnings (UserId, WarnedBy, WarningReason, WarningTimestampUtc)
+        VALUES (@UserId, @WarnedBy, @WarningReason, @WarningTimestampUtc);
 
-            INSERT INTO Warnings (UserId, WarnedBy, WarningReason, WarningTimestampUtc)
-            VALUES (@UserId, @WarnedBy, @WarningReason, @WarningTimestampUtc);
+        SET @WarningId = SCOPE_IDENTITY();
 
-            SET @WarningId = SCOPE_IDENTITY();
+        SELECT @WarningId AS WarningId;
 
-            -- Return the WarningId directly
-            SELECT @WarningId;
-        COMMIT TRANSACTION
+        COMMIT TRANSACTION;
     END TRY
     BEGIN CATCH
         IF @@TRANCOUNT > 0
@@ -55,8 +60,8 @@ BEGIN
         DECLARE @ErrorMessage NVARCHAR(4000) = ERROR_MESSAGE();
         DECLARE @ErrorSeverity INT = ERROR_SEVERITY();
         DECLARE @ErrorState INT = ERROR_STATE();
-        RAISERROR (@ErrorMessage, @ErrorSeverity, @ErrorState);
         EXEC [dbo].[InsertErrorTrackInfo] 'InsertWarning', @ErrorMessage;
+        RAISERROR (@ErrorMessage, @ErrorSeverity, @ErrorState);
     END CATCH
 END
 GO

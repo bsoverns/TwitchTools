@@ -8,23 +8,34 @@
 
 IF (DB_NAME() = 'TestTwitchData')
 BEGIN		
-	DECLARE @WarningId INT,
+	PRINT('Running InsertWarning UnitTest - STARTED');
+
+	DECLARE 
+		@WarningId INT = NULL,
 		@TestUserId INT = 1,
-		@TestChatMessage VARCHAR(500) = 'This is a test message on ' + FORMAT(GETUTCDATE(),'yyyy-MM-dd HH:mm:ss'),
 		@TestWarnedBy VARCHAR(50) = 'bsoverns',
 		@TestWarningReason VARCHAR(500) = 'This is a test warning for UserId',
 		@TestWarningTimestampUtc DATETIME = GETUTCDATE();
-	DECLARE @Result TABLE (WarningId INT);
 
-	INSERT INTO @Result
-	EXEC [dbo].[InsertWarning] @UserId = @TestUserId, @WarnedBy = @TestWarnedBy, @WarningReason = @TestWarningReason, @WarningTimestampUtc = @TestWarningTimestampUtc;
+	-- Execute InsertWarning procedure
+	EXEC [dbo].[InsertWarning] 
+		@UserId = @TestUserId, 
+		@WarnedBy = @TestWarnedBy, 
+		@WarningReason = @TestWarningReason, 
+		@WarningTimestampUtc = @TestWarningTimestampUtc;
 
-	SELECT @WarningId = WarningId FROM @Result;
+	-- Retrieve the WarningId for verification
+	SELECT TOP 1 @WarningId = WarningId 
+	FROM [dbo].[Warnings]
+	WHERE UserId = @TestUserId
+	ORDER BY WarningTimestampUtc DESC;
 
+	-- Check if WarningId is retrieved
 	IF (@WarningId IS NULL)
 		PRINT ('Fail: Warning was not created for UserId test case');
-
 	ELSE
 		PRINT ('Pass: Warning was created for UserId test case');
+
+	PRINT('Running InsertWarning UnitTest - COMPLETED');
 END;
 GO

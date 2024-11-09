@@ -2,7 +2,8 @@
 (
     @TwitchUserId VARCHAR(50) = NULL,
     @UserName VARCHAR(50),
-    @InteractionDateUtc DATETIME = NULL
+    @InteractionDateUtc DATETIME = NULL,
+    @UserId INT OUTPUT
 )
 AS
 BEGIN
@@ -14,38 +15,32 @@ BEGIN
         IF (@UserName IS NULL)
         BEGIN
             EXEC [dbo].[InsertErrorTrackInfo] 'UpsertUser', 'UserName cannot be NULL.';                
+            ROLLBACK TRANSACTION;
             RETURN;
         END
 
         IF (@InteractionDateUtc IS NULL)
             SET @InteractionDateUtc = GETUTCDATE();
 
-        MERGE INTO [dbo].[Users] AS t
-        USING 
-        (
-            SELECT @TwitchUserId AS TwitchUserId, @UserName AS UserName, @InteractionDateUtc AS InteractionDateUtc
-        ) AS s
-        ON t.UserName = s.UserName
-        WHEN MATCHED AND
-        (
-            ISNULL(t.TwitchUserId, '') <> ISNULL(s.TwitchUserId, '') OR 
-            ISNULL(t.LastInteractionDateTimeUtc, '1900-01-01') != ISNULL(s.InteractionDateUtc, '1900-01-01')
-        )   
-        THEN
-            UPDATE SET 
-                t.LastInteractionDateTimeUtc = @InteractionDateUtc,
-                t.TwitchUserId = ISNULL(t.TwitchUserId, s.TwitchUserId)
-        WHEN NOT MATCHED THEN
-            INSERT (TwitchUserId, UserName, FirstInteractionDateTimeUtc, LastInteractionDateTimeUtc)
-            VALUES (s.TwitchUserId, s.UserName, @InteractionDateUtc, @InteractionDateUtc);
+        IF EXISTS (SELECT 1 FROM [dbo].[Users] WHERE UserName = @UserName)
+        BEGIN
+            UPDATE [dbo].[Users]
+            SET 
+                LastInteractionDateTimeUtc = @InteractionDateUtc,
+                TwitchUserId = COALESCE(@TwitchUserId, TwitchUserId)
+            WHERE UserName = @UserName;
 
-        DECLARE @UserId INT;
+            SELECT @UserId = UserId 
+            FROM [dbo].[Users] 
+            WHERE UserName = @UserName;
+        END
+        ELSE
+        BEGIN
+            INSERT INTO [dbo].[Users] (TwitchUserId, UserName, FirstInteractionDateTimeUtc, LastInteractionDateTimeUtc)
+            VALUES (@TwitchUserId, @UserName, @InteractionDateUtc, @InteractionDateUtc);
 
-        SELECT TOP 1 @UserId = UserId 
-        FROM [dbo].[Users] 
-        WHERE UserName = @UserName
-        OR TwitchUserId = @TwitchUserId
-		ORDER BY LastInteractionDateTimeUtc DESC;
+            SET @UserId = SCOPE_IDENTITY();
+        END
 
         SELECT @UserId AS UserId;
 

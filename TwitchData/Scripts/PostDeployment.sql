@@ -23,4 +23,4 @@ Post-Deployment Script Template
 :r .\UnitTests\InsertErrorTracking.UnitTest.sql
 
 -- Unit test cleanup except UserId = 1
---:r .\CleanUp\CleanUpTestData.Cleanup.sql
+:r .\CleanUp\CleanUpTestData.Cleanup.sql

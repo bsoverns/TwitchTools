@@ -11,38 +11,41 @@ AS
 BEGIN
     SET NOCOUNT ON;
 
+    IF (@UserId IS NULL AND @TwitchUserId IS NULL AND @UserName IS NULL)
+    BEGIN
+        EXEC [dbo].[InsertErrorTrackInfo] 'InsertBan', 'UserId, TwitchUserId, and UserName cannot all be NULL.';                
+        RETURN;
+    END
+
     BEGIN TRY
         BEGIN TRANSACTION;
 
-        DECLARE @BanId INT;
-        DECLARE @UserTable TABLE (UserId INT);
-
-        IF (@UserId IS NULL AND @TwitchUserId IS NULL AND @UserName IS NULL)
+        IF (@UserId IS NULL)
         BEGIN
-            EXEC [dbo].[InsertErrorTrackInfo] 'InsertChat', 'UserId, TwitchUserId, and UserName cannot be NULL.';                
-            RETURN;
+            EXEC [dbo].[UpsertUser] 
+                @TwitchUserId = @TwitchUserId, 
+                @UserName = @UserName, 
+                @InteractionDateUtc = @BannedTimestampUtc, 
+                @UserId = @UserId OUTPUT;
+
+            IF (@UserId IS NULL)
+            BEGIN
+                EXEC [dbo].[InsertErrorTrackInfo] 'InsertBan', 'Failed to upsert user. UserId cannot be NULL.';
+                ROLLBACK TRANSACTION;
+                RETURN;
+            END
         END
-
-        IF (@TwitchUserId IS NULL AND @UserName IS NULL)
-        BEGIN
-            EXEC [dbo].[InsertErrorTrackInfo] 'InsertChat', 'TwitchUserId and UserName cannot be NULL.';
-            RETURN; 
-        END
-
-        INSERT INTO @UserTable
-        EXEC [dbo].[UpsertUser] @TwitchUserId = @TwitchUserId, @UserName = @UserName, @InteractionDateUtc = @BannedTimestampUtc;
-
-        SELECT @UserId = UserId FROM @UserTable;
 
         IF (@BannedTimestampUtc IS NULL)
             SET @BannedTimestampUtc = GETUTCDATE();
 
+        DECLARE @BanId INT;
         INSERT INTO Bans (UserId, BannedBy, BannedReason, BannedTimestampUtc)
         VALUES (@UserId, @BannedBy, @BanReason, @BannedTimestampUtc);
 
         SET @BanId = SCOPE_IDENTITY();
 
-        SELECT @BanId;
+        SELECT @BanId AS BanId;
 
         COMMIT TRANSACTION;
     END TRY
@@ -55,8 +58,8 @@ BEGIN
         DECLARE @ErrorMessage NVARCHAR(4000) = ERROR_MESSAGE();
         DECLARE @ErrorSeverity INT = ERROR_SEVERITY();
         DECLARE @ErrorState INT = ERROR_STATE();
-        RAISERROR (@ErrorMessage, @ErrorSeverity, @ErrorState);
         EXEC [dbo].[InsertErrorTrackInfo] 'InsertBan', @ErrorMessage;
+        RAISERROR (@ErrorMessage, @ErrorSeverity, @ErrorState);
     END CATCH
 END
 GO
