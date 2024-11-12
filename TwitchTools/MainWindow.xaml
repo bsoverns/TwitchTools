@@ -5,8 +5,54 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TwitchTools"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
+        Title="Twitch Tools" Height="450" Width="800"
+        WindowStartupLocation="CenterScreen">
 
-    </Grid>
+    <!-- Add Border Padding -->
+    <Border Padding="10">
+        <Grid>
+            <!-- Define two columns in the Grid -->
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1.5*" />
+                <!-- Left Column -->
+                <ColumnDefinition Width="2*" />
+                <!-- Right Column -->
+            </Grid.ColumnDefinitions>
+
+            <!-- Left Column -->
+            <StackPanel Grid.Column="0" Margin="10">
+                <!-- Group Box for Input and Grid -->
+                <GroupBox Header="Users" Padding="10" Margin="0,0,0,10">
+                    <StackPanel>
+                        <!-- Small Text Box -->
+                        <TextBox Name="UserName"  Width="200" MaxLength="20" 
+                                 Margin="0,0,0,10" 
+                                 ToolTip="Enter up to 20 characters"
+                                 HorizontalAlignment="Left"/>
+
+                        <!-- Grid for People Results -->
+                        <DataGrid Name="UserDataGrid" AutoGenerateColumns="True" 
+                                  Height="200"
+                                  Margin="0,0,0,10"
+                                  ToolTip="Results of users will appear here"/>
+                    </StackPanel>
+                </GroupBox>
+            </StackPanel>
+
+            <!-- Right Column -->
+            <StackPanel Grid.Column="1" Margin="10">
+                <!-- Group Box for Main Grid -->
+                <GroupBox Header="Chat Details" Padding="10" Margin="0,0,0,10">
+                    <!-- Grid Taking up Majority of Right Column -->
+                    <DataGrid Name="DetailsDataGrid" AutoGenerateColumns="True"
+                              Height="250" 
+                              ToolTip="Details of selected users will appear here"/>
+                </GroupBox>
+
+                <!-- Button Below the Grid -->
+                <Button Content="Submit" Width="100" HorizontalAlignment="Right"
+                        ToolTip="Click to perform action"/>
+            </StackPanel>
+        </Grid>
+    </Border>
 </Window>
