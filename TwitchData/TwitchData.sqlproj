@@ -125,6 +125,8 @@
     <None Include="Scripts\UnitTests\InsertWarningUserName.UnitTest.sql" />
     <None Include="Scripts\UnitTests\InsertTimeoutUserName.UnitTest.sql" />
     <None Include="Scripts\UnitTests\InsertBanUserName.UnitTest.sql" />
+    <Build Include="dbo\Views\vGetUserChat.sql" />
+    <Build Include="dbo\Views\vGetIncompleteTts.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Scripts\PostDeployment.sql" />
