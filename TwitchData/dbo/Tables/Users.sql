@@ -5,7 +5,8 @@
   [UserName] VARCHAR(50) NOT NULL,
   [FirstInteractionDateTimeUtc] DATETIME NOT NULL CONSTRAINT [DF_Users_FirstInteractionDateTimeUtc] DEFAULT GETUTCDATE(),
   [LastInteractionDateTimeUtc] DATETIME,
-  CONSTRAINT [PK_Users_UserId] PRIMARY KEY CLUSTERED ([UserId] ASC)
+  CONSTRAINT [PK_Users_UserId] PRIMARY KEY CLUSTERED ([UserId] ASC),
+  CONSTRAINT [UQ_Users_UserName] UNIQUE ([UserName] ASC)
 );
 GO
 
