@@ -20,39 +20,55 @@
             </Grid.ColumnDefinitions>
 
             <!-- Left Column -->
-            <StackPanel Grid.Column="0" Margin="10">
+            <Grid Grid.Column="0" Margin="10">
                 <!-- Group Box for Input and Grid -->
-                <GroupBox Header="Users" Padding="10" Margin="0,0,0,10">
-                    <StackPanel>
+                <GroupBox Header="Users" Padding="10" Margin="0,0,0,10" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                    <Grid>
+                        <!-- Define two rows for TextBox and DataGrid -->
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+
                         <!-- Small Text Box -->
-                        <TextBox Name="UserName"  Width="200" MaxLength="20" 
+                        <TextBox Name="UserName" Width="200" MaxLength="20" 
                                  Margin="0,0,0,10" 
                                  ToolTip="Enter up to 20 characters"
-                                 HorizontalAlignment="Left"/>
+                                 HorizontalAlignment="Left"
+                                 VerticalAlignment="Top" Grid.Row="0"/>
 
-                        <!-- Grid for People Results -->
+                        <!-- Grid for People Results -->                       
                         <DataGrid Name="UserDataGrid" AutoGenerateColumns="True" 
-                                  Height="200"
                                   Margin="0,0,0,10"
-                                  ToolTip="Results of users will appear here"/>
-                    </StackPanel>
+                                  ToolTip="Results of users will appear here"
+                                  Grid.Row="1" VerticalAlignment="Stretch"/>
+                    </Grid>
                 </GroupBox>
-            </StackPanel>
+            </Grid>
 
             <!-- Right Column -->
-            <StackPanel Grid.Column="1" Margin="10">
+            <Grid Grid.Column="1" Margin="10">
                 <!-- Group Box for Main Grid -->
-                <GroupBox Header="Chat Details" Padding="10" Margin="0,0,0,10">
-                    <!-- Grid Taking up Majority of Right Column -->
-                    <DataGrid Name="DetailsDataGrid" AutoGenerateColumns="True"
-                              Height="250" 
-                              ToolTip="Details of selected users will appear here"/>
-                </GroupBox>
+                <GroupBox Header="Chat Details" Padding="10" Margin="0,0,0,10" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                    <Grid>
+                        <!-- Define two rows for DataGrid and Button -->
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
 
-                <!-- Button Below the Grid -->
-                <Button Content="Submit" Width="100" HorizontalAlignment="Right"
-                        ToolTip="Click to perform action"/>
-            </StackPanel>
+                        <!-- DataGrid for Chat Details -->
+                        <DataGrid Name="DetailsDataGrid" AutoGenerateColumns="True"
+                                  Margin="0,0,0,10"
+                                  ToolTip="Details of selected users will appear here"
+                                  VerticalAlignment="Stretch" Grid.Row="0"/>
+
+                        <!-- Button Below the DataGrid -->
+                        <Button Content="Submit" Width="100" HorizontalAlignment="Right"
+                                ToolTip="Click to perform action" Grid.Row="1" Margin="0,10,0,0"/>
+                    </Grid>
+                </GroupBox>
+            </Grid>
         </Grid>
     </Border>
 </Window>

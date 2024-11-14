@@ -73,7 +73,7 @@ namespace TwitchTools
 
         private void StartTimers()
         {
-            Timer.Interval = TimeSpan.FromSeconds(5);
+            Timer.Interval = TimeSpan.FromSeconds(1);
             Timer.Tick += Timer_Tick;
             Timer.Start();
         }
@@ -85,12 +85,48 @@ namespace TwitchTools
             Timer.Start();
         }
 
-        private async Task GetUserChat(string UserName, string QueryType)
+        private async Task GetUserChat(string userName, string queryType)
         {
             SQLProcess sqlProcess = new SQLProcess();
-            DataTable userChat = await Task.Run(() => sqlProcess.GetUserChat(UserName, QueryType, SQLConnectDb));
+            DataTable userChat = await Task.Run(() => sqlProcess.GetUserChat(userName, queryType, SQLConnectDb));
 
-            DetailsDataGrid.ItemsSource = userChat.DefaultView;
+            // Extract distinct UserNames sorted by ChatId descending
+            var distinctUserNames = userChat.AsEnumerable()
+                .GroupBy(row => row.Field<string>("UserName"))
+                .Select(group => group.OrderByDescending(row => row.Field<int>("ChatId")).First()) // Select the most recent ChatId per group
+                .OrderByDescending(row => row.Field<int>("ChatId"))
+                .Select(row => new
+                {
+                    UserName = row.Field<string>("UserName"),
+                    ChatMessage = row.Field<string>("ChatMessage"),
+                    ChannelName = row.Field<string>("ChannelName")
+                })
+                .ToList(); // Convert to a list for easier iteration and usage
+
+            // Create a DataTable for distinct UserNames and ChatMessages for DetailsDataGrid
+            DataTable distinctUserDataTable = new DataTable();
+            distinctUserDataTable.Columns.Add("UserName", typeof(string));
+            distinctUserDataTable.Columns.Add("ChatMessage", typeof(string));
+            distinctUserDataTable.Columns.Add("ChannelName", typeof(string));
+
+            foreach (var userChatData in distinctUserNames)
+            {
+                distinctUserDataTable.Rows.Add(userChatData.UserName, userChatData.ChatMessage, userChatData.ChannelName);
+            }
+
+            // Set DataGrid ItemsSource after data extraction and transformation
+            DetailsDataGrid.ItemsSource = distinctUserDataTable.DefaultView;
+
+            // Create a DataTable for distinct UserNames for UserDataGrid if needed
+            DataTable distinctUserNamesDataTable = new DataTable();
+            distinctUserNamesDataTable.Columns.Add("UserName", typeof(string));
+            foreach (var userChatData in distinctUserNames)
+            {
+                distinctUserNamesDataTable.Rows.Add(userChatData.UserName);
+            }
+
+            // Optional: Bind distinct UserNames to UserDataGrid
+            UserDataGrid.ItemsSource = distinctUserNamesDataTable.DefaultView;
         }
 
 
