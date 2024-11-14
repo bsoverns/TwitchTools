@@ -10,6 +10,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 
 namespace TwitchTools
 {   
@@ -19,6 +20,7 @@ namespace TwitchTools
     public partial class MainWindow : Window
     {
         SQLConnectionClass SQLConnectDb = new SQLConnectionClass();
+        //System.Timers.Timer Timer = new System.Timers.Timer();        
 
         public MainWindow()
         {
@@ -30,6 +32,7 @@ namespace TwitchTools
         private void LoadSettings()
         {
             LoadSqlSettings();
+            StartTimers();
         }
 
         private void LoadSqlSettings()
@@ -65,6 +68,31 @@ namespace TwitchTools
                 }
             }
         }
+
+        private DispatcherTimer Timer = new DispatcherTimer();
+
+        private void StartTimers()
+        {
+            Timer.Interval = TimeSpan.FromSeconds(5);
+            Timer.Tick += Timer_Tick;
+            Timer.Start();
+        }
+
+        private async void Timer_Tick(object sender, EventArgs e)
+        {
+            Timer.Stop(); // Optional, if you want to control the interval
+            await GetUserChat(UserName.Text, "NONE");
+            Timer.Start();
+        }
+
+        private async Task GetUserChat(string UserName, string QueryType)
+        {
+            SQLProcess sqlProcess = new SQLProcess();
+            DataTable userChat = await Task.Run(() => sqlProcess.GetUserChat(UserName, QueryType, SQLConnectDb));
+
+            DetailsDataGrid.ItemsSource = userChat.DefaultView;
+        }
+
 
         #endregion Loaders
     }
