@@ -17,7 +17,11 @@ namespace TwitchTools
 
         #region SQLQueries
 
-        string _GetAccountsInfo = @"dbo.GetAccounts";
+        string _GetUser = @"SELECT * 
+FROM [dbo].[vGetUser]";
+
+        string _GetUserChat = @"SELECT * 
+FROM [dbo].[vGetUserChat]";
 
         #endregion SQLQueries
 
@@ -51,76 +55,72 @@ WHERE AuthorizationId = 2";
 
         #endregion SQLCode
 
-        public DataTable GetActiveStockList(SQLConnectionClass SQLConnect)
+        public DataTable GetUserChat(string UserName, string QueryType, SQLConnectionClass SQLConnect)
         {
             DataTable returnTable = new DataTable();
             returnTable.Clear();
+            string _UserChatquery = _GetUserChat;
+            string? _WhereClause = "";
+
+            switch (QueryType)
+            {
+                case "EQUAL":
+                    _WhereClause = "\r\nWHERE UserName = @UserName";
+                    break;
+                case "LIKE":
+                    _WhereClause = "\r\nWHERE UserName LIKE @UserName";
+                    break;
+                case "NONE":
+                    _WhereClause = null;
+                    break;
+                default:
+                    _WhereClause = null;
+                    break;
+            }
+
+            if (_WhereClause != null)
+            {
+                _UserChatquery = _GetUserChat + "\r\nWHERE UserName = @UserName\r\nORDER BY UserName, TimeStampUtc DESC";
+            }
+            else
+            {
+                _UserChatquery = _GetUserChat + "\r\nORDER BY TimeStampUtc DESC";
+            }
 
             try
             {
-                if (SQLConnect.UseIPAdress == true)
+                using (SqlConnection con = new SqlConnection("Data Source=" + SQLConnect.DataSource + ";Initial Catalog=" + SQLConnect.InitialCatalog + ";User ID=" + SQLConnect.UserID + ";Password=" + SQLConnect.Password + ";Connect Timeout = 60;"))
                 {
-                    IPAddress ip = new IPHelper().get_ip_from_host_name(SQLConnect.DataSource);
-
-                    using (System.Data.SqlClient.SqlConnection con = new System.Data.SqlClient.SqlConnection("Data Source=" + SQLConnect.DataSource + ";Initial Catalog=" + SQLConnect.InitialCatalog + ";User ID=" + SQLConnect.UserID + ";Password=" + SQLConnect.Password + ";Connect Timeout = 60;"))
+                    using (SqlCommand cmd = new SqlCommand(_UserChatquery, con))
                     {
-                        using (SqlCommand cmd = new SqlCommand(_GetAccountsInfo, con))
+                        cmd.CommandType = CommandType.Text;
+                        if (QueryType == "EQUAL")
                         {
-                            cmd.CommandType = CommandType.StoredProcedure;
-                            using (SqlDataAdapter readActiveStocks = new SqlDataAdapter(cmd))
-                            {
-                                readActiveStocks.Fill(returnTable);
+                            cmd.Parameters.AddWithValue("@UserName", UserName);
+                        }
+                        else if (QueryType == "LIKE")
+                        {
+                            cmd.Parameters.AddWithValue("@UserName", UserName + "%");
+                        }
 
-                                //using (DataTable tempStorageTable = new DataTable())
-                                //{
-                                //    readActiveStocks.Fill(tempStorageTable);
-                                //    returnTable = tempStorageTable;
-                                //}
-                            }
+                        using (SqlDataAdapter readUserChats = new SqlDataAdapter(cmd))
+                        {
+                            readUserChats.Fill(returnTable);
                         }
                     }
                 }
-
-                else
-                {
-                    using (System.Data.SqlClient.SqlConnection con = new System.Data.SqlClient.SqlConnection("Data Source=" + SQLConnect.DataSource + ";Initial Catalog=" + SQLConnect.InitialCatalog + ";User ID=" + SQLConnect.UserID + ";Password=" + SQLConnect.Password + ";Connect Timeout = 60;"))
-                    {
-                        using (SqlCommand cmd = new SqlCommand(_GetAccountsInfo, con))
-                        {
-                            cmd.CommandType = CommandType.StoredProcedure;
-                            using (SqlDataAdapter readActiveStocks = new SqlDataAdapter(cmd))
-                            {
-                                readActiveStocks.Fill(returnTable);
-                            }
-                        }
-                    }
-                }
-
-                if (returnTable.Rows.Count == 0)
-                {
-                    SqlConnection sqlConnString = new SqlConnection("Data Source=" + SQLConnect.DataSource + ";Initial Catalog=" + SQLConnect.InitialCatalog + ";User ID=" + SQLConnect.UserID + ";Password=" + SQLConnect.Password + ";Connect Timeout = 60;");
-
-                    SqlDataAdapter readStuff = new SqlDataAdapter(_GetAccountsInfo, sqlConnString);
-
-                    sqlConnString.Open();
-                    readStuff.Fill(returnTable);
-                    sqlConnString.Close();
-                }
-
                 return returnTable;
             }
-
             catch (Exception ex)
             {
-                //MessageBox.Show(ex.ToString());
+                // Consider logging the exception
                 return returnTable;
             }
-
             finally
             {
                 returnTable.Dispose();
             }
-        }       
+        }
 
         public string cleanCode(string item)
         {

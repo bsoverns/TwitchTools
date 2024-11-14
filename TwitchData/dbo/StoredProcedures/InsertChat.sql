@@ -4,6 +4,7 @@
     @TwitchUserId VARCHAR(50) = NULL,
     @UserName VARCHAR(50) = NULL,
     @ChatMessage VARCHAR(500),
+    @ChannelName VARCHAR(50) = NULL,
     @IsCommand BIT = NULL,
     @InteractionDateUtc DATETIME = NULL
 )
@@ -38,8 +39,8 @@ BEGIN
         SET @InteractionDateUtc = GETUTCDATE();
 
     BEGIN TRY
-        INSERT INTO Chats (UserId, ChatMessage, TimeStampUtc, IsCommand)
-        VALUES (@UserId, @ChatMessage, @InteractionDateUtc, @IsCommand);
+        INSERT INTO Chats (UserId, ChatMessage, ChannelName, TimeStampUtc, IsCommand)
+        VALUES (@UserId, @ChatMessage, @ChannelName, @InteractionDateUtc, @IsCommand);
 
         SET @ChatId = SCOPE_IDENTITY();
 
