@@ -80,7 +80,7 @@ WHERE AuthorizationId = 2";
 
             if (_WhereClause != null)
             {
-                _UserChatquery = _GetUserChat + "\r\nWHERE UserName = @UserName\r\nORDER BY UserName, TimeStampUtc DESC";
+                _UserChatquery = _GetUserChat + _WhereClause + "\r\nORDER BY UserName, TimeStampUtc DESC";
             }
             else
             {
