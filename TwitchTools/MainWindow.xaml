@@ -13,9 +13,9 @@
         <Grid>
             <!-- Define two columns in the Grid -->
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1.5*" />
+                <ColumnDefinition Width="1*" />
                 <!-- Left Column -->
-                <ColumnDefinition Width="2*" />
+                <ColumnDefinition Width="3*" />
                 <!-- Right Column -->
             </Grid.ColumnDefinitions>
 
@@ -39,11 +39,17 @@
                                  TextChanged="UserName_Search"/>
 
                         <!-- Grid for People Results -->
-                        <DataGrid Name="UserDataGrid" AutoGenerateColumns="True" 
+                        <DataGrid Name="UserDataGrid" AutoGenerateColumns="False" 
                                   Margin="0,0,0,10" IsReadOnly="True" VerticalScrollBarVisibility="Visible"
                                   ToolTip="Results of users will appear here"
-                                  Grid.Row="1" VerticalAlignment="Stretch"
-                                  SelectionChanged="UserName_TargetedSearch" />
+                                  Grid.Row="1" VerticalAlignment="Stretch"                                  
+                                  SelectionChanged="UserName_TargetedSearch">
+                            
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="UserName" Binding="{Binding UserName}" Width="*" />
+                            </DataGrid.Columns>
+
+                        </DataGrid>
                     </Grid>
                 </GroupBox>
             </Grid>
@@ -60,35 +66,41 @@
                         </Grid.RowDefinitions>
 
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <!--<ColumnDefinition Width="Auto" />-->
                         </Grid.ColumnDefinitions>
 
                         <!-- DataGrid for Chat Details -->
-                        <DataGrid Name="DetailsDataGrid" AutoGenerateColumns="True"
-                                  Margin="0,0,0,10" IsReadOnly="True" VerticalScrollBarVisibility="Visible"
-                                  HorizontalAlignment="Stretch"
+                        <DataGrid Name="DetailsDataGrid" Grid.ColumnSpan="2"
+                                  AutoGenerateColumns="False" 
+                                  Margin="0,0,0,10" IsReadOnly="True" VerticalScrollBarVisibility="Visible"                                  
                                   ToolTip="Details of selected users will appear here"
-                                  VerticalAlignment="Stretch" Grid.Row="0"
+                                  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Row="0"
                                   SelectionMode="Extended" SelectionUnit="FullRow"
-                                  SelectionChanged="DetailsDataGrid_SelectionChanged"/>
+                                  SelectionChanged="DetailsDataGrid_SelectionChanged">
+                            
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="UserName" Binding="{Binding UserName}" Width="1*" />
+                                <DataGridTextColumn Header="ChatMessage" Binding="{Binding ChatMessage}" Width="3*" >
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="TextWrapping" Value="Wrap" />
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                </DataGridTextColumn>
+                                <DataGridTextColumn Header="ChannelName" Binding="{Binding ChannelName}" Width="1*" />
+                            </DataGrid.Columns>
+                        </DataGrid>
 
                         <StackPanel Orientation="Horizontal" Grid.Row="1" HorizontalAlignment="Left" Margin="0,10,0,0">
                             <!-- Buttons Below the DataGrid In a StackPanel-->
-                            <Button Content="Speak" Width="100" HorizontalAlignment="Left"
+                            <Button x:Name="SpeakButton" Content="Speak" Width="100" HorizontalAlignment="Left"
                                 ToolTip="Click to read the chat message" 
                                 Click="Speak_Button_Click"/>
-                            <Button Content="Clear" Width="100" HorizontalAlignment="Left"
+                            <Button x:Name="ClearButton" Content="Clear" Width="100" HorizontalAlignment="Left"
                                 ToolTip="Click to start the chat scroll" 
                                     Click="ClearEverything_Button_Click"/>
                         </StackPanel>
-
-                        <!-- Buttons Below the DataGrid, the buttons are all by themselves -->
-                        <!--                        
-                        <Button Content="Speak" Width="100" HorizontalAlignment="Left"
-                                ToolTip="Click to read the chat message" Grid.Column="0" Grid.Row="1" Margin="0,10,0,0"/>
-                        <Button Content="Clear" Width="100" HorizontalAlignment="Left"
-                                ToolTip="Click to start the chat scroll" Grid.Column="1" Grid.Row="1" Margin="0,10,0,0"/>-->
                     </Grid>
                 </GroupBox>
             </Grid>

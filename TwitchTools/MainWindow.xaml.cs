@@ -25,15 +25,18 @@ namespace TwitchTools
         SQLConnectionClass SQLConnectDb = new SQLConnectionClass();
         string _defaultVoice = "Microsoft David Desktop";
         string _queryType = "NONE";
+        List<TwitchUser> _twitchUsers = new List<TwitchUser>();
+        // May need to change this below for performance
+        List<TwitchUserChat> _twitchUserChats = new List<TwitchUserChat>();
 
         public MainWindow()
         {
             InitializeComponent();            
-            SpeakAsync(_defaultVoice, @"This is the loading alert voice for the Twitch Tools to make sure they are working");
+            //Speak(_defaultVoice, @"This is the loading alert voice for the Twitch Tools to make sure they are working");
             LoadSettings();
         }
 
-        private async Task SpeakAsync(string Voice, string Message)
+        private void Speak(string Voice, string Message)
         {
             // Voices          
             // Microsoft David Desktop
@@ -47,11 +50,6 @@ namespace TwitchTools
         {
             LoadSqlSettings();
             FirstStartTimers();
-        }
-
-        private void speak()
-        {
-            // Incomplete.
         }
 
         private void LoadSqlSettings()
@@ -97,58 +95,9 @@ namespace TwitchTools
             Timer.Start();
         }
 
-        private async void Timer_Tick(object sender, EventArgs e)
-        {
-            Timer.Stop(); // Optional, if you want to control the interval
-            await GetUserChat(UserName.Text, _queryType);
-            Timer.Start();
-        }
-
-        private async Task GetUserChat(string userName, string queryType)
-        {
-            SQLProcess sqlProcess = new SQLProcess();
-            DataTable userChat = await Task.Run(() => sqlProcess.GetUserChat(userName, queryType, SQLConnectDb));
-
-            // Extract distinct UserNames sorted by ChatId descending
-            var distinctUserNames = userChat.AsEnumerable()
-                //.GroupBy(row => row.Field<string>("UserName"))
-                //.Select(group => group.OrderByDescending(row => row.Field<int>("ChatId")).First()) // Select the most recent ChatId per group
-                .OrderByDescending(row => row.Field<int>("ChatId"))
-                .Select(row => new
-                {
-                    UserName = row.Field<string>("UserName"),
-                    ChatMessage = row.Field<string>("ChatMessage"),
-                    ChannelName = row.Field<string>("ChannelName")
-                })
-                .ToList(); // Convert to a list for easier iteration and usage
-
-            // Create a DataTable for distinct UserNames and ChatMessages for DetailsDataGrid
-            DataTable distinctUserDataTable = new DataTable();
-            distinctUserDataTable.Columns.Add("UserName", typeof(string));
-            distinctUserDataTable.Columns.Add("ChatMessage", typeof(string));
-            distinctUserDataTable.Columns.Add("ChannelName", typeof(string));
-
-            foreach (var userChatData in distinctUserNames)
-            {
-                distinctUserDataTable.Rows.Add(userChatData.UserName, userChatData.ChatMessage, userChatData.ChannelName);
-            }
-            
-            // Main Chat Scroll Window
-            DetailsDataGrid.ItemsSource = distinctUserDataTable.DefaultView;
-
-            DataTable distinctUserNamesDataTable = new DataTable();
-            distinctUserNamesDataTable.Columns.Add("UserName", typeof(string));
-            foreach (var userChatData in distinctUserNames)
-            {
-                distinctUserNamesDataTable.Rows.Add(userChatData.UserName);
-            }
-
-            // Users pulled from chat. Order in chat message order.  Will be able to be clicked or searched
-            UserDataGrid.ItemsSource = distinctUserNamesDataTable.DefaultView;
-        }
-
-
         #endregion Loaders
+
+        #region Timers
 
         private void StopTimers()
         {
@@ -167,6 +116,83 @@ namespace TwitchTools
             //}     
         }
 
+        private async void Timer_Tick(object sender, EventArgs e)
+        {
+            Timer.Stop(); // Optional, if you want to control the interval
+            await GetUserChat(UserName.Text, _queryType);
+            Timer.Start();
+        }
+
+        #endregion Timers
+
+        #region Methods
+
+        private async Task GetUserChat(string userName, string queryType)
+        {
+            SQLProcess sqlProcess = new SQLProcess();
+            DataTable userChat = await Task.Run(() => sqlProcess.GetUserChat(userName, queryType, SQLConnectDb));
+
+            // Extract distinct UserNames sorted by ChatId descending
+            var distinctUserChats = userChat.AsEnumerable()
+                //.GroupBy(row => row.Field<string>("UserName"))
+                //.Select(group => group.OrderByDescending(row => row.Field<int>("ChatId")).First()) // Select the most recent ChatId per group
+                .OrderByDescending(row => row.Field<int>("ChatId"))
+                .Select(row => new
+                {
+                    UserName = row.Field<string>("UserName"),
+                    ChatMessage = row.Field<string>("ChatMessage"),
+                    ChannelName = row.Field<string>("ChannelName")
+                })
+                .ToList(); // Convert to a list for easier iteration and usage
+
+            // Create a DataTable for distinct UserNames and ChatMessages for DetailsDataGrid
+            DataTable distinctUserDataTable = new DataTable();
+            distinctUserDataTable.Columns.Add("UserName", typeof(string));
+            distinctUserDataTable.Columns.Add("ChatMessage", typeof(string));
+            distinctUserDataTable.Columns.Add("ChannelName", typeof(string));
+
+            _twitchUserChats.Clear();
+
+            _twitchUserChats = distinctUserChats.Select(x => new TwitchUserChat
+            {
+                UserName = x.UserName,
+                ChatMessage = x.ChatMessage,
+                ChannelName = x.ChannelName
+            }).ToList();
+
+            DetailsDataGrid.ItemsSource = _twitchUserChats;
+
+            // Extract distinct UserNames 
+            var distinctUserNames = userChat.AsEnumerable()
+                .Select(row => new
+                {
+                    UserName = row.Field<string>("UserName")
+                })
+                .Distinct()
+                .ToList(); // Convert to a list for easier iteration and usage
+
+            // Distinct UserNames
+            DataTable distinctUserNameTable = new DataTable();
+            distinctUserNameTable.Columns.Add("UserName", typeof(string));
+
+            foreach (var userChatData in distinctUserNames)
+            {
+                distinctUserNameTable.Rows.Add(userChatData.UserName);
+            }
+
+            _twitchUsers.Clear();
+            _twitchUsers = distinctUserNames.Select(x => new TwitchUser
+            {
+                UserName = x.UserName
+            }).ToList();
+
+            UserDataGrid.ItemsSource = _twitchUsers;
+        }
+
+        #endregion Methods
+
+        #region MainWindowControls
+
         private void DetailsDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (DetailsDataGrid.SelectedItem != null)
@@ -177,16 +203,22 @@ namespace TwitchTools
 
         private void Speak_Button_Click(object sender, RoutedEventArgs e)
         {
-            if (DetailsDataGrid.SelectedItem is DataRowView row)
+            SpeakButton.IsEnabled = false;
+            ClearButton.IsEnabled = false;
+            var selectedItem = DetailsDataGrid.SelectedItem;
+            if (selectedItem != null && selectedItem is TwitchUserChat row)
             {
-                string chatMessage = row.Row.ItemArray[1].ToString();
+                string chatMessage = row.ChatMessage;
                 if (!string.IsNullOrEmpty(chatMessage))
-                {
-                    SpeakAsync(_defaultVoice, chatMessage);
-                }
+                    Speak(_defaultVoice, chatMessage);
+
                 else
                     MessageBox.Show("No chat message to speak for");
-            }            
+            }
+
+            DetailsDataGrid.SelectedItem = null;
+            SpeakButton.IsEnabled = true;
+            ClearButton.IsEnabled = true;
         }
 
         private void ClearEverything_Button_Click(object sender, RoutedEventArgs e)
@@ -198,28 +230,21 @@ namespace TwitchTools
         private void UserName_Search(object sender, TextChangedEventArgs e)
         {
             if (UserName.Text.Length > 0 && UserDataGrid.SelectedItem == null)
-            {
                 _queryType = "LIKE";
-            }
-            
-            else if (UserName.Text.Length > 0 && UserDataGrid.SelectedItem != null)
-            {
 
+            else if (UserName.Text.Length > 0 && UserDataGrid.SelectedItem != null)
                 _queryType = "EQUAL";
-            }
 
             else
-            {
                 _queryType = "NONE";
-            }
         }
 
         private void UserName_TargetedSearch(object sender, SelectionChangedEventArgs e)
         {
-            //if (DetailsDataGrid.SelectedItem is DataRowView row)
-            if (UserDataGrid.SelectedItem is DataRowView row)
+            var selectedItem = UserDataGrid.SelectedItem;
+            if (selectedItem != null && selectedItem is TwitchUser row)
             {
-                string userName = row.Row.ItemArray[0].ToString();
+                string userName = row.UserName;
                 if (!string.IsNullOrEmpty(userName))
                 {
                     _queryType = "EQUAL";
@@ -227,5 +252,7 @@ namespace TwitchTools
                 }
             }
         }
+
+        #endregion MainWindowControls
     }
 }
