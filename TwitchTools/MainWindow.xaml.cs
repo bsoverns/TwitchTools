@@ -141,7 +141,8 @@ namespace TwitchTools
                 {
                     UserName = row.Field<string>("UserName"),
                     ChatMessage = row.Field<string>("ChatMessage"),
-                    ChannelName = row.Field<string>("ChannelName")
+                    ChannelName = row.Field<string>("ChannelName"),
+                    IsFlagged = row.Field<bool>("IsFlagged")
                 })
                 .ToList(); // Convert to a list for easier iteration and usage
 
@@ -150,6 +151,7 @@ namespace TwitchTools
             distinctUserDataTable.Columns.Add("UserName", typeof(string));
             distinctUserDataTable.Columns.Add("ChatMessage", typeof(string));
             distinctUserDataTable.Columns.Add("ChannelName", typeof(string));
+            distinctUserDataTable.Columns.Add("IsFlagged", typeof(bool));
 
             _twitchUserChats.Clear();
 

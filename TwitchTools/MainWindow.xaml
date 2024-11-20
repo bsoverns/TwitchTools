@@ -89,6 +89,7 @@
                                     </DataGridTextColumn.ElementStyle>
                                 </DataGridTextColumn>
                                 <DataGridTextColumn Header="ChannelName" Binding="{Binding ChannelName}" Width="1*" />
+                                <DataGridTextColumn Header="Flagged" Binding="{Binding IsFlagged}" Width="1*" />
                             </DataGrid.Columns>
                         </DataGrid>
 
