@@ -159,7 +159,8 @@ namespace TwitchTools
             {
                 UserName = x.UserName,
                 ChatMessage = x.ChatMessage,
-                ChannelName = x.ChannelName
+                ChannelName = x.ChannelName,
+                IsFlagged = x.IsFlagged
             }).ToList();
 
             DetailsDataGrid.ItemsSource = _twitchUserChats;
