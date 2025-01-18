@@ -12,5 +12,6 @@ namespace TwitchTools
         public string ChatMessage { get; set; }
         public string ChannelName { get; set; }
         public bool IsFlagged { get; set; }
+        public string FlaggedReason { get; set; }
     }
 }

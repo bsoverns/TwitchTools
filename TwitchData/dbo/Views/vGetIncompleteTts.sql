@@ -1,9 +1,8 @@
 ﻿CREATE VIEW [dbo].[vGetIncompleteTts]
 WITH SCHEMABINDING
 AS
-SELECT u.UserId, u.UserName, t.TtsId, c.ChatId, c.ChatMessage, c.TimeStampUtc, t.TtsCreatedTimestampUtc
-FROM dbo.TextToSpeechQueue t
-INNER JOIN dbo.Chats c ON c.ChatId = t.ChatId
+SELECT u.UserId, u.UserName, c.ChatId, c.ChatMessage, c.TimeStampUtc
+FROM dbo.Chats c
 INNER JOIN dbo.Users u ON u.UserId = c.UserId
-WHERE t.TtsStatus = 'Queued' AND t.IsComplete = 0;
+WHERE c.IsTextToSpeech = 1 AND c.IsModerated = 1 AND c.IsFlagged = 0 AND c.IsTtsComplete = 0;
 GO

@@ -12,48 +12,60 @@ BEGIN
 	-- Test Case 1: Insert a chat message for a given UserId
 	BEGIN
 		DECLARE 
-			@ChatId INT = NULL,
-			@TtsId INT = NULL,
-			@TestUserId INT = 1,
-			@TestChatMessage VARCHAR(500) = 'This is a test message for the UserId test case on ' + FORMAT(GETUTCDATE(),'yyyy-MM-dd HH:mm:ss'),
-			@TestIsCommand BIT = 0,
-			@TestInteractionDateUtc DATETIME = GETUTCDATE();
+			@ChatId1 INT = NULL,
+			@TtsId1 INT = NULL,
+			@TestUserId1 INT = 1,
+			@TestChatMessage1 VARCHAR(500) = 'This is a test message for the UserId test without TTS case on ' + FORMAT(GETUTCDATE(),'yyyy-MM-dd HH:mm:ss'),
+			@TestIsCommand1 BIT = 0,
+			@TestInteractionDateUtc1 DATETIME = GETUTCDATE(),
+			@TestIsTextToSpeech1 BIT = 0;
 
 		EXEC [dbo].[InsertChat] 
-			@UserId = @TestUserId, 
-			@ChatMessage = @TestChatMessage, 
-			@IsCommand = @TestIsCommand, 
-			@InteractionDateUtc = @TestInteractionDateUtc;
+			@UserId = @TestUserId1, 
+			@ChatMessage = @TestChatMessage1, 
+			@IsCommand = @TestIsCommand1, 
+			@InteractionDateUtc = @TestInteractionDateUtc1,
+			@IsTextToSpeech = @TestIsTextToSpeech1;
 
-		SELECT TOP 1 @ChatId = ChatId 
+		SELECT TOP 1 @ChatId1 = ChatId 
 		FROM [dbo].[Chats]
-		WHERE UserId = @TestUserId
+		WHERE UserId = @TestUserId1
+		AND IsTextToSpeech = 0
 		ORDER BY TimeStampUtc DESC;
 
-		IF (@ChatId IS NULL)	
+		IF (@ChatId1 IS NULL)	
 			PRINT ('Fail: Chat was not created for UserId test case');
 		ELSE
 			PRINT ('Pass: Chat was created for UserId test case');
 	END
 
 	-- Test Case 2: Insert a chat TTS message for the created ChatId
-	IF (@ChatId IS NOT NULL)
 	BEGIN
-		EXEC [dbo].[InsertTextToSpeechQueue] @ChatId;
+		DECLARE 
+			@ChatId2 INT = NULL,
+			@TestUserId2 INT = 1,
+			@TestChatMessage2 VARCHAR(500) = 'This is a test message for the UserId test with TTS case on ' + FORMAT(GETUTCDATE(), 'yyyy-MM-dd HH:mm:ss'),
+			@TestIsCommand2 BIT = 0,
+			@TestInteractionDateUtc2 DATETIME = GETUTCDATE(),
+			@TestIsTextToSpeech2 BIT = 0;
 
-		SELECT TOP 1 @TtsId = TtsId 
-		FROM [dbo].[TextToSpeechQueue]
-		WHERE ChatId = @ChatId
-		ORDER BY TtsCreatedTimestampUtc DESC;
+		EXEC [dbo].[InsertChat] 
+			@UserId = @TestUserId2, 
+			@ChatMessage = @TestChatMessage2, 
+			@IsCommand = @TestIsCommand2, 
+			@InteractionDateUtc = @TestInteractionDateUtc2,
+			@IsTextToSpeech = @TestIsTextToSpeech2;
 
-		IF (@TtsId IS NULL)
+		SELECT TOP 1 @ChatId2 = ChatId 
+		FROM [dbo].[Chats]
+		WHERE UserId = @TestUserId2
+		AND IsTextToSpeech = 1
+		ORDER BY TimeStampUtc DESC;
+
+		IF (@ChatId2 IS NULL)
 			PRINT ('Fail: Chat TTS was not created for UserId test case');
 		ELSE
 			PRINT ('Pass: Chat TTS was created for UserId test case');
-	END
-	ELSE
-	BEGIN
-		PRINT ('Skip: TTS creation test was skipped because Chat was not created.');
 	END
 
 	PRINT('Running InsertChatAndTtsUserId UnitTest - COMPLETE');

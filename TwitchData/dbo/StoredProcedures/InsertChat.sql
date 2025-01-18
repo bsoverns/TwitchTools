@@ -6,7 +6,8 @@
     @ChatMessage VARCHAR(500),
     @ChannelName VARCHAR(50) = NULL,
     @IsCommand BIT = NULL,
-    @InteractionDateUtc DATETIME = NULL
+    @InteractionDateUtc DATETIME = NULL,
+    @IsTextToSpeech BIT
 )
 AS
 BEGIN
@@ -39,8 +40,8 @@ BEGIN
         SET @InteractionDateUtc = GETUTCDATE();
 
     BEGIN TRY
-        INSERT INTO Chats (UserId, ChatMessage, ChannelName, TimeStampUtc, IsCommand)
-        VALUES (@UserId, @ChatMessage, @ChannelName, @InteractionDateUtc, @IsCommand);
+        INSERT INTO Chats (UserId, ChatMessage, ChannelName, TimeStampUtc, IsCommand, IsTextToSpeech)
+        VALUES (@UserId, @ChatMessage, @ChannelName, @InteractionDateUtc, @IsCommand, @IsTextToSpeech);
 
         SET @ChatId = SCOPE_IDENTITY();
 

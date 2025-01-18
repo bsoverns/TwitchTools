@@ -142,7 +142,8 @@ namespace TwitchTools
                     UserName = row.Field<string>("UserName"),
                     ChatMessage = row.Field<string>("ChatMessage"),
                     ChannelName = row.Field<string>("ChannelName"),
-                    IsFlagged = row.Field<bool>("IsFlagged")
+                    IsFlagged = row.Field<bool>("IsFlagged"),
+                    FlaggedReason = row.Field<string>("FlaggedReason")
                 })
                 .ToList(); // Convert to a list for easier iteration and usage
 
@@ -152,6 +153,7 @@ namespace TwitchTools
             distinctUserDataTable.Columns.Add("ChatMessage", typeof(string));
             distinctUserDataTable.Columns.Add("ChannelName", typeof(string));
             distinctUserDataTable.Columns.Add("IsFlagged", typeof(bool));
+            distinctUserDataTable.Columns.Add("FlaggedReason", typeof(string));
 
             _twitchUserChats.Clear();
 
@@ -160,7 +162,8 @@ namespace TwitchTools
                 UserName = x.UserName,
                 ChatMessage = x.ChatMessage,
                 ChannelName = x.ChannelName,
-                IsFlagged = x.IsFlagged
+                IsFlagged = x.IsFlagged,
+                FlaggedReason = x.FlaggedReason
             }).ToList();
 
             DetailsDataGrid.ItemsSource = _twitchUserChats;

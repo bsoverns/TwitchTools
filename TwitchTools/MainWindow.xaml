@@ -100,7 +100,9 @@
                                 </DataGridTextColumn>
                                 <DataGridTextColumn Header="ChannelName" Binding="{Binding ChannelName}" Width="1*" />
                                 <DataGridTextColumn Header="Flagged" Binding="{Binding IsFlagged}" Width="1*" />
+                                <DataGridTextColumn Header="Flagged Reason" Binding="{Binding FlaggedReason}" Width="1*" />
                             </DataGrid.Columns>
+                            
                         </DataGrid>
 
                         <StackPanel Orientation="Horizontal" Grid.Row="1" HorizontalAlignment="Left" Margin="0,10,0,0">
@@ -111,7 +113,13 @@
                             <Button x:Name="ClearButton" Content="Clear" Width="100" HorizontalAlignment="Left"
                                 ToolTip="Click to start the chat scroll" 
                                     Click="ClearEverything_Button_Click"/>
-                        </StackPanel>
+                        </StackPanel> 
+                        
+                        <!--Maybe add a checkbox here for only seeing items flagged - Column 1 -->
+                        <!--Add a button to button a 15 minute timeout - Column 2 -->
+                        <!--Add a button to button a 15 minute timeout - Column 3 -->
+                        <!--Add a textbox for length of Ban : 0 = Perm : Other = Minute - Column 4 -->
+                        <!--Add a button to button trigger Ban - Column 5 -->
                     </Grid>
                 </GroupBox>
             </Grid>

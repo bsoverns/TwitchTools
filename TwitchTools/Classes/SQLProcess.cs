@@ -23,6 +23,8 @@ FROM [dbo].[vGetUser]";
         string _GetUserChat = @"SELECT * 
 FROM [dbo].[vGetUserChat]";
 
+        string _GetUnModeratedChat = @"SELECT TOP 100 ChatId, ChatMessage FROM [dbo].[vGetUncheckedChatsForModeration] ORDER BY TimeStampUtc"
+;
         #endregion SQLQueries
 
         #region SQLInsert 
