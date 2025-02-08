@@ -78,7 +78,17 @@
                                   VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Row="0"
                                   SelectionMode="Extended" SelectionUnit="FullRow"
                                   SelectionChanged="DetailsDataGrid_SelectionChanged">
-                            
+
+                            <DataGrid.RowStyle>
+                                <Style TargetType="DataGridRow">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsFlagged}" Value="True">
+                                            <Setter Property="Background" Value="Yellow" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </DataGrid.RowStyle>
+
                             <DataGrid.Columns>
                                 <DataGridTextColumn Header="UserName" Binding="{Binding UserName}" Width="1*" />
                                 <DataGridTextColumn Header="ChatMessage" Binding="{Binding ChatMessage}" Width="3*" >
@@ -89,7 +99,10 @@
                                     </DataGridTextColumn.ElementStyle>
                                 </DataGridTextColumn>
                                 <DataGridTextColumn Header="ChannelName" Binding="{Binding ChannelName}" Width="1*" />
+                                <DataGridTextColumn Header="Flagged" Binding="{Binding IsFlagged}" Width="1*" />
+                                <DataGridTextColumn Header="Flagged Reason" Binding="{Binding FlaggedReason}" Width="1*" />
                             </DataGrid.Columns>
+                            
                         </DataGrid>
 
                         <StackPanel Orientation="Horizontal" Grid.Row="1" HorizontalAlignment="Left" Margin="0,10,0,0">
@@ -99,8 +112,14 @@
                                 Click="Speak_Button_Click"/>
                             <Button x:Name="ClearButton" Content="Clear" Width="100" HorizontalAlignment="Left"
                                 ToolTip="Click to start the chat scroll" 
-                                    Click="ClearEverything_Button_Click"/>
-                        </StackPanel>
+                                Click="ClearEverything_Button_Click"/>
+                            <Border Width="20"/>
+
+                            <CheckBox x:Name="ShowFlaggedMessagesOnly" Content="Flagged Messages"
+                                HorizontalAlignment="Left"
+                                ToolTip="Check to see only flagged messages"
+                                Checked="FlaggedCheckBox_Checked" Unchecked="FlaggedCheckBox_Unchecked"/>
+                        </StackPanel>                         
                     </Grid>
                 </GroupBox>
             </Grid>

@@ -23,6 +23,11 @@ FROM [dbo].[vGetUser]";
         string _GetUserChat = @"SELECT * 
 FROM [dbo].[vGetUserChat]";
 
+        string _GetUserChatFlagged = @"SELECT *
+FROM [dbo].[vGetUserChatFlagged]";
+
+        string _GetUnModeratedChat = @"SELECT TOP 100 ChatId, ChatMessage FROM [dbo].[vGetUncheckedChatsForModeration] ORDER BY TimeStampUtc"
+;
         #endregion SQLQueries
 
         #region SQLInsert 
@@ -55,11 +60,11 @@ WHERE AuthorizationId = 2";
 
         #endregion SQLCode
 
-        public DataTable GetUserChat(string UserName, string QueryType, SQLConnectionClass SQLConnect)
+        public DataTable GetUserChat(string UserName, string QueryType, bool IsFlagged, SQLConnectionClass SQLConnect)
         {
             DataTable returnTable = new DataTable();
             returnTable.Clear();
-            string _UserChatquery = _GetUserChat;
+            string _UserChatquery = IsFlagged ? _GetUserChatFlagged : _GetUserChat;
             string? _WhereClause = "";
 
             switch (QueryType)
@@ -80,11 +85,11 @@ WHERE AuthorizationId = 2";
 
             if (_WhereClause != null)
             {
-                _UserChatquery = _GetUserChat + _WhereClause + "\r\nORDER BY UserName, TimeStampUtc DESC";
+                _UserChatquery = IsFlagged ? _GetUserChatFlagged : _GetUserChat + _WhereClause + "\r\nORDER BY UserName, TimeStampUtc DESC";
             }
             else
             {
-                _UserChatquery = _GetUserChat + "\r\nORDER BY TimeStampUtc DESC";
+                _UserChatquery = IsFlagged ? _GetUserChatFlagged : _GetUserChat + "\r\nORDER BY TimeStampUtc DESC";
             }
 
             try

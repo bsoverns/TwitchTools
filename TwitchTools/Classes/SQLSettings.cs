@@ -11,7 +11,7 @@ namespace TwitchTools
         {
             bool _saveStatusReturn = false;
             //string _main_path = AppDomain.CurrentDomain.BaseDirectory;
-            string _main_path = (@"D:\SandboxFiles\JsonTest\TwitchTools\");
+            string _main_path = (@"C:\SandboxFiles\JsonTest\TwitchTools\");
             string _File_name = (@"SqlSettings.xml");
             string _combine = System.IO.Path.Combine(_main_path, _File_name);
             string SqlDbKey = SqlConnectData.DataSource + "|||" + SqlConnectData.InitialCatalog + "|||" + SqlConnectData.UserID + "|||" + SqlConnectData.Password + "|||" + Convert.ToString(SqlConnectData.UseIPAdress);
@@ -54,7 +54,7 @@ namespace TwitchTools
             string[] separators = { "|||" };
             string[] _loadStatusReturn = null;
             //string _main_path = AppDomain.CurrentDomain.BaseDirectory;
-            string _main_path = (@"D:\SandboxFiles\JsonTest\TwitchTools\");
+            string _main_path = (@"C:\SandboxFiles\JsonTest\TwitchTools\");
             string _File_name = (@"SqlSettings.xml");
             string _combine = System.IO.Path.Combine(_main_path, _File_name);
 
