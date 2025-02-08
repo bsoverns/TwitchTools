@@ -25,8 +25,8 @@ namespace TwitchTools
         SQLConnectionClass SQLConnectDb = new SQLConnectionClass();
         string _defaultVoice = "Microsoft David Desktop";
         string _queryType = "NONE";
+        bool _isFlagged = false;
         List<TwitchUser> _twitchUsers = new List<TwitchUser>();
-        // May need to change this below for performance
         List<TwitchUserChat> _twitchUserChats = new List<TwitchUserChat>();
 
         public MainWindow()
@@ -119,7 +119,10 @@ namespace TwitchTools
         private async void Timer_Tick(object sender, EventArgs e)
         {
             Timer.Stop(); // Optional, if you want to control the interval
-            await GetUserChat(UserName.Text, _queryType);
+            if (_isFlagged)
+                await GetUserChat(UserName.Text, _queryType);
+            else
+                await GetUserChat(UserName.Text, _queryType);
             Timer.Start();
         }
 
@@ -130,7 +133,7 @@ namespace TwitchTools
         private async Task GetUserChat(string userName, string queryType)
         {
             SQLProcess sqlProcess = new SQLProcess();
-            DataTable userChat = await Task.Run(() => sqlProcess.GetUserChat(userName, queryType, SQLConnectDb));
+            DataTable userChat = await Task.Run(() => sqlProcess.GetUserChat(userName, queryType, _isFlagged, SQLConnectDb));
 
             // Extract distinct UserNames sorted by ChatId descending
             var distinctUserChats = userChat.AsEnumerable()
@@ -233,7 +236,17 @@ namespace TwitchTools
             StartTimers();
         }
 
-        private void UserName_Search(object sender, TextChangedEventArgs e)
+        private void FlaggedCheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            _isFlagged = true;            
+        }
+
+        private void FlaggedCheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            _isFlagged = false;
+        }
+
+private void UserName_Search(object sender, TextChangedEventArgs e)
         {
             if (UserName.Text.Length > 0 && UserDataGrid.SelectedItem == null)
                 _queryType = "LIKE";
@@ -247,6 +260,7 @@ namespace TwitchTools
 
         private void UserName_TargetedSearch(object sender, SelectionChangedEventArgs e)
         {
+            _isFlagged = false;
             var selectedItem = UserDataGrid.SelectedItem;
             if (selectedItem != null && selectedItem is TwitchUser row)
             {
@@ -257,7 +271,7 @@ namespace TwitchTools
                     UserName.Text = userName;
                 }
             }
-        }
+        }       
 
         #endregion MainWindowControls
     }

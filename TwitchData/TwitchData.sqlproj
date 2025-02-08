@@ -130,6 +130,7 @@
     <Build Include="dbo\Views\vGetUncheckedChatsForModeration.sql" />
     <Build Include="dbo\StoredProcedures\UpdateChatModerationResult.sql" />
     <Build Include="dbo\StoredProcedures\UpdateTextToSpeechComplete.sql" />
+    <Build Include="dbo\Views\vGetUserChatFlagged.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Scripts\PostDeployment.sql" />

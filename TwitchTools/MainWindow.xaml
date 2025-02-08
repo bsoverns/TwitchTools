@@ -112,14 +112,14 @@
                                 Click="Speak_Button_Click"/>
                             <Button x:Name="ClearButton" Content="Clear" Width="100" HorizontalAlignment="Left"
                                 ToolTip="Click to start the chat scroll" 
-                                    Click="ClearEverything_Button_Click"/>
-                        </StackPanel> 
-                        
-                        <!--Maybe add a checkbox here for only seeing items flagged - Column 1 -->
-                        <!--Add a button to button a 15 minute timeout - Column 2 -->
-                        <!--Add a button to button a 15 minute timeout - Column 3 -->
-                        <!--Add a textbox for length of Ban : 0 = Perm : Other = Minute - Column 4 -->
-                        <!--Add a button to button trigger Ban - Column 5 -->
+                                Click="ClearEverything_Button_Click"/>
+                            <Border Width="20"/>
+
+                            <CheckBox x:Name="ShowFlaggedMessagesOnly" Content="Flagged Messages"
+                                HorizontalAlignment="Left"
+                                ToolTip="Check to see only flagged messages"
+                                Checked="FlaggedCheckBox_Checked" Unchecked="FlaggedCheckBox_Unchecked"/>
+                        </StackPanel>                         
                     </Grid>
                 </GroupBox>
             </Grid>
