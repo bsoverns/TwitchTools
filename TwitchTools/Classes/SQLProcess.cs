@@ -13,7 +13,7 @@ namespace TwitchTools
 {
     class SQLProcess
     {
-        #region SQLCode
+        #region SQLCodeActions
 
         #region SQLQueries
 
@@ -26,8 +26,10 @@ FROM [dbo].[vGetUserChat]";
         string _GetUserChatFlagged = @"SELECT *
 FROM [dbo].[vGetUserChatFlagged]";
 
-        string _GetUnModeratedChat = @"SELECT TOP 100 ChatId, ChatMessage FROM [dbo].[vGetUncheckedChatsForModeration] ORDER BY TimeStampUtc"
-;
+        string _GetUnModeratedChat = @"SELECT TOP 100 ChatId, ChatMessage FROM [dbo].[vGetUncheckedChatsForModeration] ORDER BY TimeStampUtc";
+
+        string _GetChannelNames = @"SELECT ChannelName, ChannelOrder FROM [dbo].[Channels] ORDER BY ChannelOrder, ChannelName";
+
         #endregion SQLQueries
 
         #region SQLInsert 
@@ -58,22 +60,27 @@ WHERE AuthorizationId = 2";
 
         #endregion SQLDelete
 
-        #endregion SQLCode
+        #endregion SQLCodeActions
 
-        public DataTable GetUserChat(string UserName, string QueryType, bool IsFlagged, SQLConnectionClass SQLConnect)
+        #region SQLMethods
+
+        public DataTable GetUserChat(string UserName, string QueryType, bool IsFlagged, string ChannelName, SQLConnectionClass SQLConnect)
         {
             DataTable returnTable = new DataTable();
             returnTable.Clear();
             string _UserChatquery = IsFlagged ? _GetUserChatFlagged : _GetUserChat;
             string? _WhereClause = "";
+            bool whereIsUsed = false;
 
             switch (QueryType)
             {
                 case "EQUAL":
                     _WhereClause = "\r\nWHERE UserName = @UserName";
+                    whereIsUsed = true;
                     break;
                 case "LIKE":
                     _WhereClause = "\r\nWHERE UserName LIKE @UserName";
+                    whereIsUsed = true;
                     break;
                 case "NONE":
                     _WhereClause = null;
@@ -83,10 +90,30 @@ WHERE AuthorizationId = 2";
                     break;
             }
 
+            if (ChannelName != null)
+            {
+                switch (ChannelName)
+                {
+                    case "ALL":                        
+                        break;
+                    default:
+                        if (whereIsUsed)
+                        {
+                            _WhereClause += " AND ChannelName = @ChannelName";
+                        }
+                        else
+                        {
+                            _WhereClause = "\r\nWHERE ChannelName = @ChannelName";
+                        }
+                        break;
+                }
+            }
+
             if (_WhereClause != null)
             {
                 _UserChatquery = IsFlagged ? _GetUserChatFlagged : _GetUserChat + _WhereClause + "\r\nORDER BY UserName, TimeStampUtc DESC";
             }
+
             else
             {
                 _UserChatquery = IsFlagged ? _GetUserChatFlagged : _GetUserChat + "\r\nORDER BY TimeStampUtc DESC";
@@ -108,6 +135,11 @@ WHERE AuthorizationId = 2";
                             cmd.Parameters.AddWithValue("@UserName", UserName + "%");
                         }
 
+                        if (ChannelName != "ALL")
+                        {
+                            cmd.Parameters.AddWithValue("@ChannelName", ChannelName);
+                        }
+
                         using (SqlDataAdapter readUserChats = new SqlDataAdapter(cmd))
                         {
                             readUserChats.Fill(returnTable);
@@ -127,6 +159,7 @@ WHERE AuthorizationId = 2";
             }
         }
 
+        #endregion SQLMethods
         public string cleanCode(string item)
         {
             Regex digitsOnly = new Regex(@"[^\d]");

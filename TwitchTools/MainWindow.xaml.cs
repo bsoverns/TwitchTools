@@ -28,6 +28,7 @@ namespace TwitchTools
         bool _isFlagged = false;
         List<TwitchUser> _twitchUsers = new List<TwitchUser>();
         List<TwitchUserChat> _twitchUserChats = new List<TwitchUserChat>();
+        List<string> _channelNames = new List<string>() { "ALL" };
 
         public MainWindow()
         {
@@ -50,6 +51,7 @@ namespace TwitchTools
         {
             LoadSqlSettings();
             FirstStartTimers();
+            LoadDefaultChannel();
         }
 
         private void LoadSqlSettings()
@@ -95,6 +97,13 @@ namespace TwitchTools
             Timer.Start();
         }
 
+        private void LoadDefaultChannel()
+        {
+            string LoadDefaultChannel = "ALL";
+            cmbChannelSelect.ItemsSource = _channelNames;
+            cmbChannelSelect.SelectedItem = LoadDefaultChannel;
+        }
+
         #endregion Loaders
 
         #region Timers
@@ -133,7 +142,8 @@ namespace TwitchTools
         private async Task GetUserChat(string userName, string queryType)
         {
             SQLProcess sqlProcess = new SQLProcess();
-            DataTable userChat = await Task.Run(() => sqlProcess.GetUserChat(userName, queryType, _isFlagged, SQLConnectDb));
+            string channelName = cmbChannelSelect.SelectedItem as string ?? "ALL";
+            DataTable userChat = await Task.Run(() => sqlProcess.GetUserChat(userName, queryType, _isFlagged, channelName, SQLConnectDb));
 
             // Extract distinct UserNames sorted by ChatId descending
             var distinctUserChats = userChat.AsEnumerable()
@@ -178,7 +188,7 @@ namespace TwitchTools
                     UserName = row.Field<string>("UserName")
                 })
                 .Distinct()
-                .ToList(); // Convert to a list for easier iteration and usage
+                .ToList(); // Convert to a list for easier iteration and usage            
 
             // Distinct UserNames
             DataTable distinctUserNameTable = new DataTable();
@@ -196,18 +206,60 @@ namespace TwitchTools
             }).ToList();
 
             UserDataGrid.ItemsSource = _twitchUsers;
+
+            // Extract distinct channel names
+            var distinctChannelNames = userChat.AsEnumerable()
+                .Select(row => new
+                {
+                    ChannelName = row.Field<string>("ChannelName")
+                })
+                .Distinct()
+                .ToList(); // Convert to a list for easier iteration and usage
+
+            List<string> tempChannelNames = new List<string>();
+
+            tempChannelNames.Add("ALL");
+
+            foreach (var channelNameData in distinctChannelNames)
+            {
+                tempChannelNames.Add(channelNameData.ChannelName);
+            }
+
+            bool listsAreEqual = _channelNames.SequenceEqual(tempChannelNames);
+
+            if (!listsAreEqual)
+            {
+                _channelNames = tempChannelNames;
+                cmbChannelSelect.ItemsSource = _channelNames;
+            }
         }
 
         #endregion Methods
 
         #region MainWindowControls
-
+               
         private void DetailsDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (DetailsDataGrid.SelectedItem != null)
             {
                 StopTimers();
             }
+        }
+
+        private void ClearEverything_Button_Click(object sender, RoutedEventArgs e)
+        {
+            UserName.Text = "";
+            StartTimers();
+        }
+
+        private void FlaggedCheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            _isFlagged = true;            
+        }
+
+        private void FlaggedCheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            _isFlagged = false;
         }
 
         private void Speak_Button_Click(object sender, RoutedEventArgs e)
@@ -230,23 +282,7 @@ namespace TwitchTools
             ClearButton.IsEnabled = true;
         }
 
-        private void ClearEverything_Button_Click(object sender, RoutedEventArgs e)
-        {
-            UserName.Text = "";
-            StartTimers();
-        }
-
-        private void FlaggedCheckBox_Checked(object sender, RoutedEventArgs e)
-        {
-            _isFlagged = true;            
-        }
-
-        private void FlaggedCheckBox_Unchecked(object sender, RoutedEventArgs e)
-        {
-            _isFlagged = false;
-        }
-
-private void UserName_Search(object sender, TextChangedEventArgs e)
+        private void UserName_Search(object sender, TextChangedEventArgs e)
         {
             if (UserName.Text.Length > 0 && UserDataGrid.SelectedItem == null)
                 _queryType = "LIKE";
