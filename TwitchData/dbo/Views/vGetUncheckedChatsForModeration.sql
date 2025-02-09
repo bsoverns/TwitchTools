@@ -3,6 +3,5 @@ WITH SCHEMABINDING
 AS
 SELECT ChatId, ChatMessage, TimeStampUtc
 FROM dbo.Chats 
-WHERE IsModerated = 0
-AND ChannelName = 'bsoverns';
+WHERE IsModerated = 0;
 GO

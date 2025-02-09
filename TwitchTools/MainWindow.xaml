@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TwitchTools"
         mc:Ignorable="d"
-        Title="Twitch Tools" Height="450" Width="800"
+        Title="Twitch Tools" Height="540" Width="960"
         WindowStartupLocation="CenterScreen">
 
     <!-- Add Border Padding -->
@@ -113,12 +113,19 @@
                             <Button x:Name="ClearButton" Content="Clear" Width="100" HorizontalAlignment="Left"
                                 ToolTip="Click to start the chat scroll" 
                                 Click="ClearEverything_Button_Click"/>
+                            
                             <Border Width="20"/>
 
                             <CheckBox x:Name="ShowFlaggedMessagesOnly" Content="Flagged Messages"
                                 HorizontalAlignment="Left"
                                 ToolTip="Check to see only flagged messages"
                                 Checked="FlaggedCheckBox_Checked" Unchecked="FlaggedCheckBox_Unchecked"/>
+                            
+                            <Border Width="20"/>
+
+                            <ComboBox x:Name="cmbChannelSelect" Width="200" 
+                                HorizontalAlignment="Left"
+                                ToolTip="Select channel to see chat"/>
                         </StackPanel>                         
                     </Grid>
                 </GroupBox>
