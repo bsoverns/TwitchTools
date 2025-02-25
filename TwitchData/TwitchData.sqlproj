@@ -103,6 +103,7 @@
     <None Include="Scripts\UnitTests\InsertBanUserId.UnitTest.sql" />
     <None Include="Scripts\CleanUp\CleanUpTestData.Cleanup.sql" />
     <None Include="Scripts\UnitTests\InsertErrorTracking.UnitTest.sql" />
+    <None Include="TwitchData_1.publish.xml" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="dbo\Tables\Users.sql" />
@@ -131,6 +132,9 @@
     <Build Include="dbo\StoredProcedures\UpdateChatModerationResult.sql" />
     <Build Include="dbo\StoredProcedures\UpdateTextToSpeechComplete.sql" />
     <Build Include="dbo\Views\vGetUserChatFlagged.sql" />
+    <Build Include="dbo\Tables\ChatBotResponse.sql" />
+    <Build Include="dbo\StoredProcedures\InsertBotResponse.sql" />
+    <Build Include="dbo\Views\vGetRecentConversation.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Scripts\PostDeployment.sql" />
