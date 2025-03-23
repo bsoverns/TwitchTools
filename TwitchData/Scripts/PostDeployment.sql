@@ -10,6 +10,9 @@ Post-Deployment Script Template
 --------------------------------------------------------------------------------------
 */
 
+-- Seed data
+:r .\Seeds\TimestampTrack.Seed.sql
+
 -- Unit tests for stored procedures
 :r .\UnitTests\UpsertUser.UnitTest.sql
 :r .\UnitTests\InsertChatAndTtsUserId.UnitTest.sql

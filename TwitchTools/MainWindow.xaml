@@ -5,8 +5,66 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TwitchTools"
         mc:Ignorable="d"
-        Title="Twitch Tools" Height="540" Width="960"
+        Title="Twitch Tools" Height="675" Width="1200"
         WindowStartupLocation="CenterScreen">
+
+    <Window.Resources>
+        <Style x:Key="RoundedToggleButton" TargetType="ToggleButton">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ToggleButton">
+                        <Grid>
+                            <!-- Outer Rounded Border -->
+                            <Border x:Name="SwitchBorder"
+                            Width="90" Height="35"
+                            CornerRadius="20"
+                            Background="Red"
+                            BorderBrush="Black"
+                            BorderThickness="1">
+                                <Grid>
+                                    <!-- Left Circle (Indicator) -->
+                                    <Ellipse x:Name="Indicator"
+                                     Width="25" Height="25"
+                                     HorizontalAlignment="Left"
+                                     Margin="5,0,0,0"
+                                     VerticalAlignment="Center"
+                                     Fill="White"/>
+
+                                    <!-- Content Text ("ON" / "OFF") -->
+                                    <TextBlock x:Name="StatusText"
+                                       Text="OFF"
+                                       FontSize="14"
+                                       FontWeight="Bold"
+                                       Foreground="White"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"/>
+                                </Grid>
+                            </Border>
+                        </Grid>
+
+                        <!-- Triggers to Change Colors and Position -->
+                        <ControlTemplate.Triggers>
+                            <!-- ON State -->
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="SwitchBorder" Property="Background" Value="Green"/>
+                                <Setter TargetName="Indicator" Property="HorizontalAlignment" Value="Right"/>
+                                <Setter TargetName="Indicator" Property="Margin" Value="0,0,5,0"/>
+                                <Setter TargetName="StatusText" Property="Text" Value="ON"/>
+                            </Trigger>
+
+                            <!-- OFF State -->
+                            <Trigger Property="IsChecked" Value="False">
+                                <Setter TargetName="SwitchBorder" Property="Background" Value="Red"/>
+                                <Setter TargetName="Indicator" Property="HorizontalAlignment" Value="Left"/>
+                                <Setter TargetName="Indicator" Property="Margin" Value="5,0,0,0"/>
+                                <Setter TargetName="StatusText" Property="Text" Value="OFF"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
 
     <!-- Add Border Padding -->
     <Border Padding="10">
@@ -126,6 +184,14 @@
                             <ComboBox x:Name="cmbChannelSelect" Width="200" 
                                 HorizontalAlignment="Left"
                                 ToolTip="Select channel to see chat"/>
+
+                            <Border Width="20"/>
+
+                            <ToggleButton x:Name="StatusToggle"
+                                Style="{StaticResource RoundedToggleButton}"
+                                ToolTip="Toggle status on/off"
+                                Checked="StatusToggle_Checked"
+                                Unchecked="StatusToggle_Unchecked"/>
                         </StackPanel>                         
                     </Grid>
                 </GroupBox>

@@ -39,3 +39,8 @@ ON [dbo].[Chats] ([IsTextToSpeech] ASC)
 INCLUDE ([TtsCompletedTimestampUtc], [IsTtsComplete])
 WITH (ONLINE = ON);
 GO
+
+CREATE NONCLUSTERED INDEX [IX_Chats_TimeStampUtc]
+ON [dbo].[Chats] ([TimeStampUtc] ASC)
+WITH (ONLINE = ON);
+GO
