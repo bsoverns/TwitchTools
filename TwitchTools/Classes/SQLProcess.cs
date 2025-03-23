@@ -21,7 +21,7 @@ namespace TwitchTools
 FROM [dbo].[vGetUser]";
 
         string _GetUserChat = @"SELECT * 
-FROM [dbo].[vGetUserChat]";
+FROM [dbo].[vGetUserChat] WITH(NOLOCk)";
 
         string _GetUserChatFlagged = @"SELECT *
 FROM [dbo].[vGetUserChatFlagged]";
@@ -29,6 +29,8 @@ FROM [dbo].[vGetUserChatFlagged]";
         string _GetUnModeratedChat = @"SELECT TOP 100 ChatId, ChatMessage FROM [dbo].[vGetUncheckedChatsForModeration] ORDER BY TimeStampUtc";
 
         string _GetChannelNames = @"SELECT ChannelName, ChannelOrder FROM [dbo].[Channels] ORDER BY ChannelOrder, ChannelName";
+
+        string _GetBotStatus = @"SELECT IsLive FROM [dbo].[vGetBotStatus]";
 
         #endregion SQLQueries
 
@@ -51,6 +53,8 @@ WHERE AuthorizationId = 2";
         #region SQLUpsert
 
         string _UpsertAccounts = @"dbo.UpsertAccounts";
+
+        string _UpsertBotStatus = @"dbo.UpsertBotStatus";
 
         #endregion SQLUpsert      
 
@@ -156,6 +160,62 @@ WHERE AuthorizationId = 2";
             finally
             {
                 returnTable.Dispose();
+            }
+        }
+
+        public bool GetBotStatus(string BotName, SQLConnectionClass SQLConnect)
+        {
+            bool IsLive = false;
+            string _WhereClause = "\r\nWHERE BotName = @BotName";
+            _GetBotStatus = _GetBotStatus + _WhereClause;
+
+            try
+            {
+                using (SqlConnection con = new SqlConnection("Data Source=" + SQLConnect.DataSource + ";Initial Catalog=" + SQLConnect.InitialCatalog + ";User ID=" + SQLConnect.UserID + ";Password=" + SQLConnect.Password + ";Connect Timeout = 60;"))
+                {
+                    using (SqlCommand cmd = new SqlCommand(_GetBotStatus, con))
+                    {
+                        cmd.CommandType = CommandType.Text;
+                        cmd.Parameters.AddWithValue("@BotName", BotName);
+                        con.Open();
+                        using (SqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                IsLive = reader.GetBoolean(0); // Assuming the second column is IsLive
+                            }
+                        }
+                    }
+                }
+
+                return IsLive;
+            }
+            catch (Exception ex)
+            {
+                // Consider logging the exception
+                return IsLive;
+            }
+        }
+
+        public void UpsertBotStatus(string BotName, bool IsLive, SQLConnectionClass SQLConnect)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection("Data Source=" + SQLConnect.DataSource + ";Initial Catalog=" + SQLConnect.InitialCatalog + ";User ID=" + SQLConnect.UserID + ";Password=" + SQLConnect.Password + ";Connect Timeout = 60;"))
+                {
+                    using (SqlCommand cmd = new SqlCommand(_UpsertBotStatus, con))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.AddWithValue("@BotName", BotName);
+                        cmd.Parameters.AddWithValue("@IsLive", IsLive);
+                        con.Open();
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // Consider logging the exception
             }
         }
 

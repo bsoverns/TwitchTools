@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+using System.Diagnostics;
 
 namespace TwitchTools
 {   
@@ -29,6 +30,7 @@ namespace TwitchTools
         List<TwitchUser> _twitchUsers = new List<TwitchUser>();
         List<TwitchUserChat> _twitchUserChats = new List<TwitchUserChat>();
         List<string> _channelNames = new List<string>() { "ALL" };
+        string botName = "bsoverns"; // This will need to be made configurable if I start using different bots and maybe changed to an array or something
 
         public MainWindow()
         {
@@ -52,6 +54,7 @@ namespace TwitchTools
             LoadSqlSettings();
             FirstStartTimers();
             LoadDefaultChannel();
+            GetBotStatus();
         }
 
         private void LoadSqlSettings()
@@ -102,6 +105,16 @@ namespace TwitchTools
             string LoadDefaultChannel = "ALL";
             cmbChannelSelect.ItemsSource = _channelNames;
             cmbChannelSelect.SelectedItem = LoadDefaultChannel;
+        }
+
+        private void GetBotStatus()
+        {
+            SQLProcess sqlProcess = new SQLProcess();
+            bool botStatus = sqlProcess.GetBotStatus(botName, SQLConnectDb);
+            if (botStatus)
+                StatusToggle.IsChecked = true;
+            else
+                StatusToggle.IsChecked = false;
         }
 
         #endregion Loaders
@@ -307,7 +320,22 @@ namespace TwitchTools
                     UserName.Text = userName;
                 }
             }
-        }       
+        }
+        private void StatusToggle_Checked(object sender, RoutedEventArgs e)
+        {
+            //Debug.WriteLine("Toggle ON: Bot is Active");
+            SQLProcess sqlProcess = new SQLProcess();
+            sqlProcess.UpsertBotStatus(botName, true, SQLConnectDb);
+        }
+
+        private void StatusToggle_Unchecked(object sender, RoutedEventArgs e)
+        {
+            //Debug.WriteLine("Toggle OFF: Bot is Inactive");
+            SQLProcess sqlProcess = new SQLProcess();
+            sqlProcess.UpsertBotStatus(botName, false, SQLConnectDb);
+        }
+
+
 
         #endregion MainWindowControls
     }
