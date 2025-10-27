@@ -1,1 +1,1 @@
-Building simple tools for a custom Twitch bot using TwitchIO.
+Building simple tools for a custom Twitch bot using TwitchIO to my local databse.
