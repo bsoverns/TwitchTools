@@ -8,6 +8,156 @@
         Title="Twitch Tools" Height="675" Width="1200"
         WindowStartupLocation="CenterScreen">
 
+    <DockPanel>
+        <!-- Top Menu -->
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Header="Maintenance">
+                <MenuItem Header="SQL Access" Click="SqlAccessMenuItem_Click"/>
+            </MenuItem>
+            <MenuItem Header="Help"/>
+        </Menu>
+
+        <!-- Everything below the menu -->
+        <Border Padding="10" DockPanel.Dock="Bottom">
+            <!-- Add Border Padding -->
+            <Border Padding="10">
+                <Grid>
+                    <!-- Define two columns in the Grid -->
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*" />
+                        <!-- Left Column -->
+                        <ColumnDefinition Width="3*" />
+                        <!-- Right Column -->
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Left Column -->
+                    <Grid Grid.Column="0" Margin="10">
+                        <!-- Group Box for Input and Grid -->
+                        <GroupBox Header="Users" Padding="10" Margin="0,0,0,10" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                            <Grid>
+                                <!-- Define two rows for TextBox and DataGrid -->
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="*" />
+                                </Grid.RowDefinitions>
+
+                                <!-- Small Text Box -->
+                                <TextBox Name="UserName" Width="200" MaxLength="20" 
+                             Margin="0,0,0,10" 
+                             ToolTip="Enter up to 20 characters"
+                             HorizontalAlignment="Left"
+                             VerticalAlignment="Top" Grid.Row="0"
+                             TextChanged="UserName_Search"/>
+
+                                <!-- Grid for People Results -->
+                                <DataGrid Name="UserDataGrid" AutoGenerateColumns="False" 
+                              Margin="0,0,0,10" IsReadOnly="True" VerticalScrollBarVisibility="Visible"
+                              ToolTip="Results of users will appear here"
+                              Grid.Row="1" VerticalAlignment="Stretch"                                  
+                              SelectionChanged="UserName_TargetedSearch">
+
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Header="UserName" Binding="{Binding UserName}" Width="*" />
+                                    </DataGrid.Columns>
+
+                                </DataGrid>
+                            </Grid>
+                        </GroupBox>
+                    </Grid>
+
+                    <!-- Right Column -->
+                    <Grid Grid.Column="1" Margin="10" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                        <!-- Group Box for Main Grid -->
+                        <GroupBox Header="Chat Details" Padding="10" Margin="0,0,0,10" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                            <Grid>
+                                <!-- Define two rows for DataGrid and Button -->
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <!--<ColumnDefinition Width="Auto" />-->
+                                </Grid.ColumnDefinitions>
+
+                                <!-- DataGrid for Chat Details -->
+                                <DataGrid Name="DetailsDataGrid" Grid.ColumnSpan="2"
+                              AutoGenerateColumns="False" 
+                              Margin="0,0,0,10" IsReadOnly="True" VerticalScrollBarVisibility="Visible"                                  
+                              ToolTip="Details of selected users will appear here"
+                              VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Row="0"
+                              SelectionMode="Extended" SelectionUnit="FullRow"
+                              SelectionChanged="DetailsDataGrid_SelectionChanged">
+
+                                    <DataGrid.RowStyle>
+                                        <Style TargetType="DataGridRow">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsFlagged}" Value="True">
+                                                    <Setter Property="Background" Value="Yellow" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </DataGrid.RowStyle>
+
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Header="UserName" Binding="{Binding UserName}" Width="1*" />
+                                        <DataGridTextColumn Header="ChatMessage" Binding="{Binding ChatMessage}" Width="3*" >
+                                            <DataGridTextColumn.ElementStyle>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="TextWrapping" Value="Wrap" />
+                                                </Style>
+                                            </DataGridTextColumn.ElementStyle>
+                                        </DataGridTextColumn>
+                                        <DataGridTextColumn Header="ChannelName" Binding="{Binding ChannelName}" Width="1*" />
+                                        <DataGridTextColumn Header="Flagged" Binding="{Binding IsFlagged}" Width="1*" />
+                                        <DataGridTextColumn Header="Flagged Reason" Binding="{Binding FlaggedReason}" Width="1*" />
+                                    </DataGrid.Columns>
+
+                                </DataGrid>
+
+                                <StackPanel Orientation="Horizontal" Grid.Row="1" Height="25" HorizontalAlignment="Left" Margin="0,10,0,0">
+                                    <!-- Buttons Below the DataGrid In a StackPanel-->
+                                    <Button x:Name="SpeakButton" Content="Speak" Width="100" HorizontalAlignment="Left"
+                                            ToolTip="Click to read the chat message" 
+                                            Click="Speak_Button_Click"/>
+                                    <Border Width="10"/>
+
+                                    <Button x:Name="ClearButton" Content="Clear" Width="100" HorizontalAlignment="Left"
+                                            ToolTip="Click to start the chat scroll" 
+                                            Click="ClearEverything_Button_Click"/>
+                                    <Border Width="10"/>
+
+                                    <CheckBox x:Name="ShowFlaggedMessagesOnly" Content="Flagged Messages"
+                                              HorizontalAlignment="Left"
+                                              ToolTip="Check to see only flagged messages"
+                                              Checked="FlaggedCheckBox_Checked" Unchecked="FlaggedCheckBox_Unchecked"/>
+                                    <Border Width="10"/>
+
+                                    <ComboBox x:Name="cmbChannelSelect" Width="200" 
+                                              HorizontalAlignment="Left"
+                                              ToolTip="Select channel to see chat"/>
+                                    <Border Width="10"/>
+
+                                    <Button x:Name="ModeratorAction" Content="Moderate" Width="100" HorizontalAlignment="Left"
+                                            ToolTip="Add an action against a user"/>
+                                    <Border Width="10"/>
+
+                                    
+                                    <ToggleButton x:Name="StatusToggle"
+                                                  ToolTip="Toggle status on/off"
+                                                  Checked="StatusToggle_Checked"
+                                                  Unchecked="StatusToggle_Unchecked"/>
+                                    <Border Width="10"/>
+                                </StackPanel>
+                            </Grid>
+                        </GroupBox>
+                    </Grid>
+                </Grid>
+            </Border>
+        </Border>
+    </DockPanel>
+
     <Window.Resources>
         <Style x:Key="RoundedToggleButton" TargetType="ToggleButton">
             <Setter Property="Template">
@@ -16,7 +166,7 @@
                         <Grid>
                             <!-- Outer Rounded Border -->
                             <Border x:Name="SwitchBorder"
-                            Width="90" Height="35"
+                            Width="90" Height="25"
                             CornerRadius="20"
                             Background="Red"
                             BorderBrush="Black"
@@ -66,136 +216,5 @@
         </Style>
     </Window.Resources>
 
-    <!-- Add Border Padding -->
-    <Border Padding="10">
-        <Grid>
-            <!-- Define two columns in the Grid -->
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1*" />
-                <!-- Left Column -->
-                <ColumnDefinition Width="3*" />
-                <!-- Right Column -->
-            </Grid.ColumnDefinitions>
-
-            <!-- Left Column -->
-            <Grid Grid.Column="0" Margin="10">
-                <!-- Group Box for Input and Grid -->
-                <GroupBox Header="Users" Padding="10" Margin="0,0,0,10" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-                    <Grid>
-                        <!-- Define two rows for TextBox and DataGrid -->
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="*" />
-                        </Grid.RowDefinitions>
-
-                        <!-- Small Text Box -->
-                        <TextBox Name="UserName" Width="200" MaxLength="20" 
-                                 Margin="0,0,0,10" 
-                                 ToolTip="Enter up to 20 characters"
-                                 HorizontalAlignment="Left"
-                                 VerticalAlignment="Top" Grid.Row="0"
-                                 TextChanged="UserName_Search"/>
-
-                        <!-- Grid for People Results -->
-                        <DataGrid Name="UserDataGrid" AutoGenerateColumns="False" 
-                                  Margin="0,0,0,10" IsReadOnly="True" VerticalScrollBarVisibility="Visible"
-                                  ToolTip="Results of users will appear here"
-                                  Grid.Row="1" VerticalAlignment="Stretch"                                  
-                                  SelectionChanged="UserName_TargetedSearch">
-                            
-                            <DataGrid.Columns>
-                                <DataGridTextColumn Header="UserName" Binding="{Binding UserName}" Width="*" />
-                            </DataGrid.Columns>
-
-                        </DataGrid>
-                    </Grid>
-                </GroupBox>
-            </Grid>
-
-            <!-- Right Column -->
-            <Grid Grid.Column="1" Margin="10" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-                <!-- Group Box for Main Grid -->
-                <GroupBox Header="Chat Details" Padding="10" Margin="0,0,0,10" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-                    <Grid>
-                        <!-- Define two rows for DataGrid and Button -->
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="*" />
-                            <RowDefinition Height="Auto" />
-                        </Grid.RowDefinitions>
-
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <!--<ColumnDefinition Width="Auto" />-->
-                        </Grid.ColumnDefinitions>
-
-                        <!-- DataGrid for Chat Details -->
-                        <DataGrid Name="DetailsDataGrid" Grid.ColumnSpan="2"
-                                  AutoGenerateColumns="False" 
-                                  Margin="0,0,0,10" IsReadOnly="True" VerticalScrollBarVisibility="Visible"                                  
-                                  ToolTip="Details of selected users will appear here"
-                                  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Row="0"
-                                  SelectionMode="Extended" SelectionUnit="FullRow"
-                                  SelectionChanged="DetailsDataGrid_SelectionChanged">
-
-                            <DataGrid.RowStyle>
-                                <Style TargetType="DataGridRow">
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding IsFlagged}" Value="True">
-                                            <Setter Property="Background" Value="Yellow" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </DataGrid.RowStyle>
-
-                            <DataGrid.Columns>
-                                <DataGridTextColumn Header="UserName" Binding="{Binding UserName}" Width="1*" />
-                                <DataGridTextColumn Header="ChatMessage" Binding="{Binding ChatMessage}" Width="3*" >
-                                    <DataGridTextColumn.ElementStyle>
-                                        <Style TargetType="TextBlock">
-                                            <Setter Property="TextWrapping" Value="Wrap" />
-                                        </Style>
-                                    </DataGridTextColumn.ElementStyle>
-                                </DataGridTextColumn>
-                                <DataGridTextColumn Header="ChannelName" Binding="{Binding ChannelName}" Width="1*" />
-                                <DataGridTextColumn Header="Flagged" Binding="{Binding IsFlagged}" Width="1*" />
-                                <DataGridTextColumn Header="Flagged Reason" Binding="{Binding FlaggedReason}" Width="1*" />
-                            </DataGrid.Columns>
-                            
-                        </DataGrid>
-
-                        <StackPanel Orientation="Horizontal" Grid.Row="1" HorizontalAlignment="Left" Margin="0,10,0,0">
-                            <!-- Buttons Below the DataGrid In a StackPanel-->
-                            <Button x:Name="SpeakButton" Content="Speak" Width="100" HorizontalAlignment="Left"
-                                ToolTip="Click to read the chat message" 
-                                Click="Speak_Button_Click"/>
-                            <Button x:Name="ClearButton" Content="Clear" Width="100" HorizontalAlignment="Left"
-                                ToolTip="Click to start the chat scroll" 
-                                Click="ClearEverything_Button_Click"/>
-                            
-                            <Border Width="20"/>
-
-                            <CheckBox x:Name="ShowFlaggedMessagesOnly" Content="Flagged Messages"
-                                HorizontalAlignment="Left"
-                                ToolTip="Check to see only flagged messages"
-                                Checked="FlaggedCheckBox_Checked" Unchecked="FlaggedCheckBox_Unchecked"/>
-                            
-                            <Border Width="20"/>
-
-                            <ComboBox x:Name="cmbChannelSelect" Width="200" 
-                                HorizontalAlignment="Left"
-                                ToolTip="Select channel to see chat"/>
-
-                            <Border Width="20"/>
-
-                            <ToggleButton x:Name="StatusToggle"
-                                Style="{StaticResource RoundedToggleButton}"
-                                ToolTip="Toggle status on/off"
-                                Checked="StatusToggle_Checked"
-                                Unchecked="StatusToggle_Unchecked"/>
-                        </StackPanel>                         
-                    </Grid>
-                </GroupBox>
-            </Grid>
-        </Grid>
-    </Border>
+    
 </Window>

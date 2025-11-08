@@ -20,8 +20,7 @@ namespace TwitchTools
         string _GetUser = @"SELECT * 
 FROM [dbo].[vGetUser]";
 
-        string _GetUserChat = @"SELECT * 
-FROM [dbo].[vGetUserChat] WITH(NOLOCk)";
+        string _GetUserChat = @"SELECT * FROM [dbo].[vGetUserChat] WITH(NOLOCk) WHERE TimeStampUtc >= DATEADD(HOUR, -24, GETUTCDATE())";
 
         string _GetUserChatFlagged = @"SELECT *
 FROM [dbo].[vGetUserChatFlagged]";
@@ -79,11 +78,11 @@ WHERE AuthorizationId = 2";
             switch (QueryType)
             {
                 case "EQUAL":
-                    _WhereClause = "\r\nWHERE UserName = @UserName";
+                    _WhereClause = "\r\nAND UserName = @UserName";
                     whereIsUsed = true;
                     break;
                 case "LIKE":
-                    _WhereClause = "\r\nWHERE UserName LIKE @UserName";
+                    _WhereClause = "\r\nAND UserName LIKE @UserName";
                     whereIsUsed = true;
                     break;
                 case "NONE":
@@ -103,11 +102,11 @@ WHERE AuthorizationId = 2";
                     default:
                         if (whereIsUsed)
                         {
-                            _WhereClause += " AND ChannelName = @ChannelName";
+                            _WhereClause += "\r\nAND ChannelName = @ChannelName";
                         }
                         else
                         {
-                            _WhereClause = "\r\nWHERE ChannelName = @ChannelName";
+                            _WhereClause = "\r\nAND ChannelName = @ChannelName";
                         }
                         break;
                 }

@@ -1,0 +1,1625 @@
+[00:07:28] 
+-- VIEW: ﻿CREATE VIEW [dbo].[vGetUserChat]
+WITH SCHEMABINDING
+AS
+SELECT u.UserId, u.UserName, c.ChatId, c.ChatMessage, c.ChannelName, c.TimeStampUtc, c.IsFlagged, c.FlaggedReason
+FROM dbo.Chats c
+INNER JOIN dbo.Users u ON u.UserId = c.UserId;
+GO
+
+[00:07:28] 
+-- ERROR executing: 
+﻿CREATE VIEW [dbo].[vGetUserChat]
+WITH SCHEMABINDING
+AS
+SELECT u.UserId, u.UserName, c.ChatId, c.ChatMessage, c.ChannelName, c.TimeStampUtc, c.IsFlagged, c.FlaggedReason
+FROM dbo.Chats c
+INNER JOIN dbo.Users u ON u.UserId = c.UserId;
+GO
+-- ('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Incorrect syntax near '\ufeff'. (102) (SQLExecDirectW); [42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'CREATE VIEW' must be the first statement in a query batch. (111); [42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Incorrect syntax near the keyword 'SELECT'. (156); [42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Incorrect syntax near 'GO'. (102)")
+
+[00:07:28] 
+-- VIEW: ﻿CREATE VIEW [dbo].[vGetIncompleteTts]
+WITH SCHEMABINDING
+AS
+SELECT u.UserId, u.UserName, c.ChatId, c.ChatMessage, c.TimeStampUtc
+FROM dbo.Chats c
+INNER JOIN dbo.Users u ON u.UserId = c.UserId
+WHERE c.IsTextToSpeech = 1 AND c.IsModerated = 1 AND c.IsFlagged = 0 AND c.IsTtsComplete = 0;
+GO
+
+[00:07:28] 
+-- ERROR executing: 
+﻿CREATE VIEW [dbo].[vGetIncompleteTts]
+WITH SCHEMABINDING
+AS
+SELECT u.UserId, u.UserName, c.ChatId, c.ChatMessage, c.TimeStampUtc
+FROM dbo.Chats c
+INNER JOIN dbo.Users u ON u.UserId = c.UserId
+WHERE c.IsTextToSpeech = 1 AND c.IsModerated = 1 AND c.IsFlagged = 0 AND c.IsTtsComplete = 0;
+GO
+-- ('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Incorrect syntax near '\ufeff'. (102) (SQLExecDirectW); [42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'CREATE VIEW' must be the first statement in a query batch. (111); [42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Incorrect syntax near the keyword 'SELECT'. (156); [42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Incorrect syntax near 'GO'. (102)")
+
+[00:07:28] 
+-- VIEW: ﻿CREATE VIEW [dbo].[vGetUser]
+WITH SCHEMABINDING
+AS
+SELECT UserId, UserName
+FROM dbo.Users
+GO
+
+[00:07:28] 
+-- ERROR executing: 
+﻿CREATE VIEW [dbo].[vGetUser]
+WITH SCHEMABINDING
+AS
+SELECT UserId, UserName
+FROM dbo.Users
+GO
+-- ('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Incorrect syntax near '\ufeff'. (102) (SQLExecDirectW); [42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'CREATE VIEW' must be the first statement in a query batch. (111); [42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Incorrect syntax near the keyword 'SELECT'. (156)")
+
+[00:07:28] 
+-- VIEW: ﻿CREATE VIEW [dbo].[vGetUncheckedChatsForModeration]
+WITH SCHEMABINDING
+AS
+SELECT ChatId, ChatMessage, TimeStampUtc
+FROM dbo.Chats 
+WHERE IsModerated = 0;
+GO
+
+[00:07:28] 
+-- ERROR executing: 
+﻿CREATE VIEW [dbo].[vGetUncheckedChatsForModeration]
+WITH SCHEMABINDING
+AS
+SELECT ChatId, ChatMessage, TimeStampUtc
+FROM dbo.Chats 
+WHERE IsModerated = 0;
+GO
+-- ('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Incorrect syntax near '\ufeff'. (102) (SQLExecDirectW); [42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'CREATE VIEW' must be the first statement in a query batch. (111); [42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Incorrect syntax near the keyword 'SELECT'. (156); [42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Incorrect syntax near 'GO'. (102)")
+
+[00:07:28] 
+-- VIEW: ﻿CREATE VIEW [dbo].[vGetUserChatFlagged]
+WITH SCHEMABINDING
+AS
+SELECT u.UserId, u.UserName, c.ChatId, c.ChatMessage, c.ChannelName, c.TimeStampUtc, c.IsFlagged, c.FlaggedReason
+FROM dbo.Chats c
+INNER JOIN dbo.Users u ON u.UserId = c.UserId
+AND c.IsFlagged = 1;
+GO
+
+[00:07:28] 
+-- ERROR executing: 
+﻿CREATE VIEW [dbo].[vGetUserChatFlagged]
+WITH SCHEMABINDING
+AS
+SELECT u.UserId, u.UserName, c.ChatId, c.ChatMessage, c.ChannelName, c.TimeStampUtc, c.IsFlagged, c.FlaggedReason
+FROM dbo.Chats c
+INNER JOIN dbo.Users u ON u.UserId = c.UserId
+AND c.IsFlagged = 1;
+GO
+-- ('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Incorrect syntax near '\ufeff'. (102) (SQLExecDirectW); [42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'CREATE VIEW' must be the first statement in a query batch. (111); [42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Incorrect syntax near the keyword 'SELECT'. (156); [42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Incorrect syntax near 'GO'. (102)")
+
+[00:07:28] 
+-- VIEW: ﻿CREATE VIEW [dbo].[vGetRecentConversation]
+WITH SCHEMABINDING
+AS
+SELECT u.UserName, c.ChatMessage, c.TimeStampUtc AS [UserTimestamp], cb.ResponseMessage AS [BotResponseMessage], cb.TimeStampUtc AS [BotTimestamp]
+FROM dbo.Chats c
+INNER JOIN dbo.Users u ON u.UserId = c.UserId
+INNER JOIN dbo.ChatBotResponse cb ON cb.ChatId = c.ChatId
+WHERE ChannelName = 'bsoverns'
+AND c.IsFlagged = 0 
+AND c.TimeStampUtc >= DATEADD(MINUTE, -30, GETUTCDATE());
+GO
+
+[00:07:28] 
+-- ERROR executing: 
+﻿CREATE VIEW [dbo].[vGetRecentConversation]
+WITH SCHEMABINDING
+AS
+SELECT u.UserName, c.ChatMessage, c.TimeStampUtc AS [UserTimestamp], cb.ResponseMessage AS [BotResponseMessage], cb.TimeStampUtc AS [BotTimestamp]
+FROM dbo.Chats c
+INNER JOIN dbo.Users u ON u.UserId = c.UserId
+INNER JOIN dbo.ChatBotResponse cb ON cb.ChatId = c.ChatId
+WHERE ChannelName = 'bsoverns'
+AND c.IsFlagged = 0 
+AND c.TimeStampUtc >= DATEADD(MINUTE, -30, GETUTCDATE());
+GO
+-- ('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Incorrect syntax near '\ufeff'. (102) (SQLExecDirectW); [42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'CREATE VIEW' must be the first statement in a query batch. (111); [42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Incorrect syntax near the keyword 'SELECT'. (156); [42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Incorrect syntax near 'GO'. (102)")
+
+[00:07:28] 
+-- VIEW: ﻿CREATE VIEW [dbo].[vGetBotStatus]
+WITH SCHEMABINDING
+AS
+	SELECT BotName, IsLive
+	FROM [dbo].[BotStatus];
+GO
+
+[00:07:28] 
+-- ERROR executing: 
+﻿CREATE VIEW [dbo].[vGetBotStatus]
+WITH SCHEMABINDING
+AS
+	SELECT BotName, IsLive
+	FROM [dbo].[BotStatus];
+GO
+-- ('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Incorrect syntax near '\ufeff'. (102) (SQLExecDirectW); [42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'CREATE VIEW' must be the first statement in a query batch. (111); [42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Incorrect syntax near the keyword 'SELECT'. (156); [42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Incorrect syntax near 'GO'. (102)")
+
+[00:07:28] 
+-- VIEW: ﻿CREATE VIEW [dbo].[vGetModerationActions]
+AS
+SELECT 'Warning' AS [Type], UserId, WarningReason AS [Reason] FROM dbo.Warnings WHERE IsComplete = 0
+UNION ALL
+SELECT 'Timeout' AS [Type], UserId, TimeoutReason AS [Reason] FROM dbo.Timeouts WHERE IsComplete = 0
+UNION ALL
+SELECT 'Ban' AS [Type], UserId, BannedReason AS [Reason] FROM dbo.Bans WHERE IsComplete = 0
+GO
+
+[00:07:28] 
+-- ERROR executing: 
+﻿CREATE VIEW [dbo].[vGetModerationActions]
+AS
+SELECT 'Warning' AS [Type], UserId, WarningReason AS [Reason] FROM dbo.Warnings WHERE IsComplete = 0
+UNION ALL
+SELECT 'Timeout' AS [Type], UserId, TimeoutReason AS [Reason] FROM dbo.Timeouts WHERE IsComplete = 0
+UNION ALL
+SELECT 'Ban' AS [Type], UserId, BannedReason AS [Reason] FROM dbo.Bans WHERE IsComplete = 0
+GO
+-- ('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Incorrect syntax near '\ufeff'. (102) (SQLExecDirectW); [42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'CREATE VIEW' must be the first statement in a query batch. (111); [42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Incorrect syntax near 'GO'. (102)")
+
+[00:08:49] 
+-- VIEW: ﻿CREATE VIEW [dbo].[vGetUserChat]
+WITH SCHEMABINDING
+AS
+SELECT u.UserId, u.UserName, c.ChatId, c.ChatMessage, c.ChannelName, c.TimeStampUtc, c.IsFlagged, c.FlaggedReason
+FROM dbo.Chats c
+INNER JOIN dbo.Users u ON u.UserId = c.UserId;
+GO
+
+[00:08:49] 
+-- ERROR executing: 
+﻿CREATE VIEW [dbo].[vGetUserChat]
+WITH SCHEMABINDING
+AS
+SELECT u.UserId, u.UserName, c.ChatId, c.ChatMessage, c.ChannelName, c.TimeStampUtc, c.IsFlagged, c.FlaggedReason
+FROM dbo.Chats c
+INNER JOIN dbo.Users u ON u.UserId = c.UserId;
+GO
+-- ('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Incorrect syntax near '\ufeff'. (102) (SQLExecDirectW); [42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'CREATE VIEW' must be the first statement in a query batch. (111); [42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Incorrect syntax near the keyword 'SELECT'. (156); [42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Incorrect syntax near 'GO'. (102)")
+
+[00:08:49] 
+-- VIEW: ﻿CREATE VIEW [dbo].[vGetIncompleteTts]
+WITH SCHEMABINDING
+AS
+SELECT u.UserId, u.UserName, c.ChatId, c.ChatMessage, c.TimeStampUtc
+FROM dbo.Chats c
+INNER JOIN dbo.Users u ON u.UserId = c.UserId
+WHERE c.IsTextToSpeech = 1 AND c.IsModerated = 1 AND c.IsFlagged = 0 AND c.IsTtsComplete = 0;
+GO
+
+[00:08:49] 
+-- ERROR executing: 
+﻿CREATE VIEW [dbo].[vGetIncompleteTts]
+WITH SCHEMABINDING
+AS
+SELECT u.UserId, u.UserName, c.ChatId, c.ChatMessage, c.TimeStampUtc
+FROM dbo.Chats c
+INNER JOIN dbo.Users u ON u.UserId = c.UserId
+WHERE c.IsTextToSpeech = 1 AND c.IsModerated = 1 AND c.IsFlagged = 0 AND c.IsTtsComplete = 0;
+GO
+-- ('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Incorrect syntax near '\ufeff'. (102) (SQLExecDirectW); [42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'CREATE VIEW' must be the first statement in a query batch. (111); [42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Incorrect syntax near the keyword 'SELECT'. (156); [42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Incorrect syntax near 'GO'. (102)")
+
+[00:08:49] 
+-- VIEW: ﻿CREATE VIEW [dbo].[vGetUser]
+WITH SCHEMABINDING
+AS
+SELECT UserId, UserName
+FROM dbo.Users
+GO
+
+[00:08:49] 
+-- ERROR executing: 
+﻿CREATE VIEW [dbo].[vGetUser]
+WITH SCHEMABINDING
+AS
+SELECT UserId, UserName
+FROM dbo.Users
+GO
+-- ('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Incorrect syntax near '\ufeff'. (102) (SQLExecDirectW); [42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'CREATE VIEW' must be the first statement in a query batch. (111); [42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Incorrect syntax near the keyword 'SELECT'. (156)")
+
+[00:08:49] 
+-- VIEW: ﻿CREATE VIEW [dbo].[vGetUncheckedChatsForModeration]
+WITH SCHEMABINDING
+AS
+SELECT ChatId, ChatMessage, TimeStampUtc
+FROM dbo.Chats 
+WHERE IsModerated = 0;
+GO
+
+[00:08:49] 
+-- ERROR executing: 
+﻿CREATE VIEW [dbo].[vGetUncheckedChatsForModeration]
+WITH SCHEMABINDING
+AS
+SELECT ChatId, ChatMessage, TimeStampUtc
+FROM dbo.Chats 
+WHERE IsModerated = 0;
+GO
+-- ('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Incorrect syntax near '\ufeff'. (102) (SQLExecDirectW); [42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'CREATE VIEW' must be the first statement in a query batch. (111); [42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Incorrect syntax near the keyword 'SELECT'. (156); [42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Incorrect syntax near 'GO'. (102)")
+
+[00:08:49] 
+-- VIEW: ﻿CREATE VIEW [dbo].[vGetUserChatFlagged]
+WITH SCHEMABINDING
+AS
+SELECT u.UserId, u.UserName, c.ChatId, c.ChatMessage, c.ChannelName, c.TimeStampUtc, c.IsFlagged, c.FlaggedReason
+FROM dbo.Chats c
+INNER JOIN dbo.Users u ON u.UserId = c.UserId
+AND c.IsFlagged = 1;
+GO
+
+[00:08:49] 
+-- ERROR executing: 
+﻿CREATE VIEW [dbo].[vGetUserChatFlagged]
+WITH SCHEMABINDING
+AS
+SELECT u.UserId, u.UserName, c.ChatId, c.ChatMessage, c.ChannelName, c.TimeStampUtc, c.IsFlagged, c.FlaggedReason
+FROM dbo.Chats c
+INNER JOIN dbo.Users u ON u.UserId = c.UserId
+AND c.IsFlagged = 1;
+GO
+-- ('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Incorrect syntax near '\ufeff'. (102) (SQLExecDirectW); [42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'CREATE VIEW' must be the first statement in a query batch. (111); [42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Incorrect syntax near the keyword 'SELECT'. (156); [42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Incorrect syntax near 'GO'. (102)")
+
+[00:08:49] 
+-- VIEW: ﻿CREATE VIEW [dbo].[vGetRecentConversation]
+WITH SCHEMABINDING
+AS
+SELECT u.UserName, c.ChatMessage, c.TimeStampUtc AS [UserTimestamp], cb.ResponseMessage AS [BotResponseMessage], cb.TimeStampUtc AS [BotTimestamp]
+FROM dbo.Chats c
+INNER JOIN dbo.Users u ON u.UserId = c.UserId
+INNER JOIN dbo.ChatBotResponse cb ON cb.ChatId = c.ChatId
+WHERE ChannelName = 'bsoverns'
+AND c.IsFlagged = 0 
+AND c.TimeStampUtc >= DATEADD(MINUTE, -30, GETUTCDATE());
+GO
+
+[00:08:49] 
+-- ERROR executing: 
+﻿CREATE VIEW [dbo].[vGetRecentConversation]
+WITH SCHEMABINDING
+AS
+SELECT u.UserName, c.ChatMessage, c.TimeStampUtc AS [UserTimestamp], cb.ResponseMessage AS [BotResponseMessage], cb.TimeStampUtc AS [BotTimestamp]
+FROM dbo.Chats c
+INNER JOIN dbo.Users u ON u.UserId = c.UserId
+INNER JOIN dbo.ChatBotResponse cb ON cb.ChatId = c.ChatId
+WHERE ChannelName = 'bsoverns'
+AND c.IsFlagged = 0 
+AND c.TimeStampUtc >= DATEADD(MINUTE, -30, GETUTCDATE());
+GO
+-- ('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Incorrect syntax near '\ufeff'. (102) (SQLExecDirectW); [42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'CREATE VIEW' must be the first statement in a query batch. (111); [42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Incorrect syntax near the keyword 'SELECT'. (156); [42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Incorrect syntax near 'GO'. (102)")
+
+[00:08:49] 
+-- VIEW: ﻿CREATE VIEW [dbo].[vGetBotStatus]
+WITH SCHEMABINDING
+AS
+	SELECT BotName, IsLive
+	FROM [dbo].[BotStatus];
+GO
+
+[00:08:49] 
+-- ERROR executing: 
+﻿CREATE VIEW [dbo].[vGetBotStatus]
+WITH SCHEMABINDING
+AS
+	SELECT BotName, IsLive
+	FROM [dbo].[BotStatus];
+GO
+-- ('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Incorrect syntax near '\ufeff'. (102) (SQLExecDirectW); [42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'CREATE VIEW' must be the first statement in a query batch. (111); [42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Incorrect syntax near the keyword 'SELECT'. (156); [42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Incorrect syntax near 'GO'. (102)")
+
+[00:08:49] 
+-- VIEW: ﻿CREATE VIEW [dbo].[vGetModerationActions]
+AS
+SELECT 'Warning' AS [Type], UserId, WarningReason AS [Reason] FROM dbo.Warnings WHERE IsComplete = 0
+UNION ALL
+SELECT 'Timeout' AS [Type], UserId, TimeoutReason AS [Reason] FROM dbo.Timeouts WHERE IsComplete = 0
+UNION ALL
+SELECT 'Ban' AS [Type], UserId, BannedReason AS [Reason] FROM dbo.Bans WHERE IsComplete = 0
+GO
+
+[00:08:49] 
+-- ERROR executing: 
+﻿CREATE VIEW [dbo].[vGetModerationActions]
+AS
+SELECT 'Warning' AS [Type], UserId, WarningReason AS [Reason] FROM dbo.Warnings WHERE IsComplete = 0
+UNION ALL
+SELECT 'Timeout' AS [Type], UserId, TimeoutReason AS [Reason] FROM dbo.Timeouts WHERE IsComplete = 0
+UNION ALL
+SELECT 'Ban' AS [Type], UserId, BannedReason AS [Reason] FROM dbo.Bans WHERE IsComplete = 0
+GO
+-- ('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Incorrect syntax near '\ufeff'. (102) (SQLExecDirectW); [42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'CREATE VIEW' must be the first statement in a query batch. (111); [42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Incorrect syntax near 'GO'. (102)")
+
+[00:10:07] 
+-- VIEW: CREATE VIEW [dbo].[vGetUserChat]
+WITH SCHEMABINDING
+AS
+SELECT u.UserId, u.UserName, c.ChatId, c.ChatMessage, c.ChannelName, c.TimeStampUtc, c.IsFlagged, c.FlaggedReason
+FROM dbo.Chats c
+INNER JOIN dbo.Users u ON u.UserId = c.UserId;
+
+[00:10:07] 
+-- VIEW: CREATE VIEW [dbo].[vGetIncompleteTts]
+WITH SCHEMABINDING
+AS
+SELECT u.UserId, u.UserName, c.ChatId, c.ChatMessage, c.TimeStampUtc
+FROM dbo.Chats c
+INNER JOIN dbo.Users u ON u.UserId = c.UserId
+WHERE c.IsTextToSpeech = 1 AND c.IsModerated = 1 AND c.IsFlagged = 0 AND c.IsTtsComplete = 0;
+
+[00:10:07] 
+-- VIEW: CREATE VIEW [dbo].[vGetUser]
+WITH SCHEMABINDING
+AS
+SELECT UserId, UserName
+FROM dbo.Users
+
+[00:10:07] 
+-- VIEW: CREATE VIEW [dbo].[vGetUncheckedChatsForModeration]
+WITH SCHEMABINDING
+AS
+SELECT ChatId, ChatMessage, TimeStampUtc
+FROM dbo.Chats 
+WHERE IsModerated = 0;
+
+[00:10:07] 
+-- VIEW: CREATE VIEW [dbo].[vGetUserChatFlagged]
+WITH SCHEMABINDING
+AS
+SELECT u.UserId, u.UserName, c.ChatId, c.ChatMessage, c.ChannelName, c.TimeStampUtc, c.IsFlagged, c.FlaggedReason
+FROM dbo.Chats c
+INNER JOIN dbo.Users u ON u.UserId = c.UserId
+AND c.IsFlagged = 1;
+
+[00:10:07] 
+-- VIEW: CREATE VIEW [dbo].[vGetRecentConversation]
+WITH SCHEMABINDING
+AS
+SELECT u.UserName, c.ChatMessage, c.TimeStampUtc AS [UserTimestamp], cb.ResponseMessage AS [BotResponseMessage], cb.TimeStampUtc AS [BotTimestamp]
+FROM dbo.Chats c
+INNER JOIN dbo.Users u ON u.UserId = c.UserId
+INNER JOIN dbo.ChatBotResponse cb ON cb.ChatId = c.ChatId
+WHERE ChannelName = 'bsoverns'
+AND c.IsFlagged = 0 
+AND c.TimeStampUtc >= DATEADD(MINUTE, -30, GETUTCDATE());
+
+[00:10:07] 
+-- VIEW: CREATE VIEW [dbo].[vGetBotStatus]
+WITH SCHEMABINDING
+AS
+	SELECT BotName, IsLive
+	FROM [dbo].[BotStatus];
+
+[00:10:07] 
+-- VIEW: CREATE VIEW [dbo].[vGetModerationActions]
+AS
+SELECT 'Warning' AS [Type], UserId, WarningReason AS [Reason] FROM dbo.Warnings WHERE IsComplete = 0
+UNION ALL
+SELECT 'Timeout' AS [Type], UserId, TimeoutReason AS [Reason] FROM dbo.Timeouts WHERE IsComplete = 0
+UNION ALL
+SELECT 'Ban' AS [Type], UserId, BannedReason AS [Reason] FROM dbo.Bans WHERE IsComplete = 0
+
+[00:11:49] 
+-- VIEW: CREATE VIEW [dbo].[vGetUserChat]
+WITH SCHEMABINDING
+AS
+SELECT u.UserId, u.UserName, c.ChatId, c.ChatMessage, c.ChannelName, c.TimeStampUtc, c.IsFlagged, c.FlaggedReason
+FROM dbo.Chats c
+INNER JOIN dbo.Users u ON u.UserId = c.UserId;
+
+[00:11:49] 
+-- ERROR executing: 
+CREATE VIEW [dbo].[vGetUserChat]
+WITH SCHEMABINDING
+AS
+SELECT u.UserId, u.UserName, c.ChatId, c.ChatMessage, c.ChannelName, c.TimeStampUtc, c.IsFlagged, c.FlaggedReason
+FROM dbo.Chats c
+INNER JOIN dbo.Users u ON u.UserId = c.UserId;
+-- ('42S01', "[42S01] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]There is already an object named 'vGetUserChat' in the database. (2714) (SQLExecDirectW)")
+
+[00:11:49] 
+-- VIEW: CREATE VIEW [dbo].[vGetIncompleteTts]
+WITH SCHEMABINDING
+AS
+SELECT u.UserId, u.UserName, c.ChatId, c.ChatMessage, c.TimeStampUtc
+FROM dbo.Chats c
+INNER JOIN dbo.Users u ON u.UserId = c.UserId
+WHERE c.IsTextToSpeech = 1 AND c.IsModerated = 1 AND c.IsFlagged = 0 AND c.IsTtsComplete = 0;
+
+[00:11:49] 
+-- ERROR executing: 
+CREATE VIEW [dbo].[vGetIncompleteTts]
+WITH SCHEMABINDING
+AS
+SELECT u.UserId, u.UserName, c.ChatId, c.ChatMessage, c.TimeStampUtc
+FROM dbo.Chats c
+INNER JOIN dbo.Users u ON u.UserId = c.UserId
+WHERE c.IsTextToSpeech = 1 AND c.IsModerated = 1 AND c.IsFlagged = 0 AND c.IsTtsComplete = 0;
+-- ('42S01', "[42S01] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]There is already an object named 'vGetIncompleteTts' in the database. (2714) (SQLExecDirectW)")
+
+[00:11:49] 
+-- VIEW: CREATE VIEW [dbo].[vGetUser]
+WITH SCHEMABINDING
+AS
+SELECT UserId, UserName
+FROM dbo.Users
+
+[00:11:49] 
+-- ERROR executing: 
+CREATE VIEW [dbo].[vGetUser]
+WITH SCHEMABINDING
+AS
+SELECT UserId, UserName
+FROM dbo.Users
+-- ('42S01', "[42S01] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]There is already an object named 'vGetUser' in the database. (2714) (SQLExecDirectW)")
+
+[00:11:49] 
+-- VIEW: CREATE VIEW [dbo].[vGetUncheckedChatsForModeration]
+WITH SCHEMABINDING
+AS
+SELECT ChatId, ChatMessage, TimeStampUtc
+FROM dbo.Chats 
+WHERE IsModerated = 0;
+
+[00:11:49] 
+-- ERROR executing: 
+CREATE VIEW [dbo].[vGetUncheckedChatsForModeration]
+WITH SCHEMABINDING
+AS
+SELECT ChatId, ChatMessage, TimeStampUtc
+FROM dbo.Chats 
+WHERE IsModerated = 0;
+-- ('42S01', "[42S01] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]There is already an object named 'vGetUncheckedChatsForModeration' in the database. (2714) (SQLExecDirectW)")
+
+[00:11:49] 
+-- VIEW: CREATE VIEW [dbo].[vGetUserChatFlagged]
+WITH SCHEMABINDING
+AS
+SELECT u.UserId, u.UserName, c.ChatId, c.ChatMessage, c.ChannelName, c.TimeStampUtc, c.IsFlagged, c.FlaggedReason
+FROM dbo.Chats c
+INNER JOIN dbo.Users u ON u.UserId = c.UserId
+AND c.IsFlagged = 1;
+
+[00:11:49] 
+-- ERROR executing: 
+CREATE VIEW [dbo].[vGetUserChatFlagged]
+WITH SCHEMABINDING
+AS
+SELECT u.UserId, u.UserName, c.ChatId, c.ChatMessage, c.ChannelName, c.TimeStampUtc, c.IsFlagged, c.FlaggedReason
+FROM dbo.Chats c
+INNER JOIN dbo.Users u ON u.UserId = c.UserId
+AND c.IsFlagged = 1;
+-- ('42S01', "[42S01] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]There is already an object named 'vGetUserChatFlagged' in the database. (2714) (SQLExecDirectW)")
+
+[00:11:49] 
+-- VIEW: CREATE VIEW [dbo].[vGetRecentConversation]
+WITH SCHEMABINDING
+AS
+SELECT u.UserName, c.ChatMessage, c.TimeStampUtc AS [UserTimestamp], cb.ResponseMessage AS [BotResponseMessage], cb.TimeStampUtc AS [BotTimestamp]
+FROM dbo.Chats c
+INNER JOIN dbo.Users u ON u.UserId = c.UserId
+INNER JOIN dbo.ChatBotResponse cb ON cb.ChatId = c.ChatId
+WHERE ChannelName = 'bsoverns'
+AND c.IsFlagged = 0 
+AND c.TimeStampUtc >= DATEADD(MINUTE, -30, GETUTCDATE());
+
+[00:11:49] 
+-- ERROR executing: 
+CREATE VIEW [dbo].[vGetRecentConversation]
+WITH SCHEMABINDING
+AS
+SELECT u.UserName, c.ChatMessage, c.TimeStampUtc AS [UserTimestamp], cb.ResponseMessage AS [BotResponseMessage], cb.TimeStampUtc AS [BotTimestamp]
+FROM dbo.Chats c
+INNER JOIN dbo.Users u ON u.UserId = c.UserId
+INNER JOIN dbo.ChatBotResponse cb ON cb.ChatId = c.ChatId
+WHERE ChannelName = 'bsoverns'
+AND c.IsFlagged = 0 
+AND c.TimeStampUtc >= DATEADD(MINUTE, -30, GETUTCDATE());
+-- ('42S01', "[42S01] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]There is already an object named 'vGetRecentConversation' in the database. (2714) (SQLExecDirectW)")
+
+[00:11:49] 
+-- VIEW: CREATE VIEW [dbo].[vGetBotStatus]
+WITH SCHEMABINDING
+AS
+	SELECT BotName, IsLive
+	FROM [dbo].[BotStatus];
+
+[00:11:49] 
+-- ERROR executing: 
+CREATE VIEW [dbo].[vGetBotStatus]
+WITH SCHEMABINDING
+AS
+	SELECT BotName, IsLive
+	FROM [dbo].[BotStatus];
+-- ('42S01', "[42S01] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]There is already an object named 'vGetBotStatus' in the database. (2714) (SQLExecDirectW)")
+
+[00:11:49] 
+-- VIEW: CREATE VIEW [dbo].[vGetModerationActions]
+AS
+SELECT 'Warning' AS [Type], UserId, WarningReason AS [Reason] FROM dbo.Warnings WHERE IsComplete = 0
+UNION ALL
+SELECT 'Timeout' AS [Type], UserId, TimeoutReason AS [Reason] FROM dbo.Timeouts WHERE IsComplete = 0
+UNION ALL
+SELECT 'Ban' AS [Type], UserId, BannedReason AS [Reason] FROM dbo.Bans WHERE IsComplete = 0
+
+[00:11:49] 
+-- ERROR executing: 
+CREATE VIEW [dbo].[vGetModerationActions]
+AS
+SELECT 'Warning' AS [Type], UserId, WarningReason AS [Reason] FROM dbo.Warnings WHERE IsComplete = 0
+UNION ALL
+SELECT 'Timeout' AS [Type], UserId, TimeoutReason AS [Reason] FROM dbo.Timeouts WHERE IsComplete = 0
+UNION ALL
+SELECT 'Ban' AS [Type], UserId, BannedReason AS [Reason] FROM dbo.Bans WHERE IsComplete = 0
+-- ('42S01', "[42S01] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]There is already an object named 'vGetModerationActions' in the database. (2714) (SQLExecDirectW)")
+
+[00:11:55] 
+-- VIEW: CREATE VIEW [dbo].[vGetUserChat]
+WITH SCHEMABINDING
+AS
+SELECT u.UserId, u.UserName, c.ChatId, c.ChatMessage, c.ChannelName, c.TimeStampUtc, c.IsFlagged, c.FlaggedReason
+FROM dbo.Chats c
+INNER JOIN dbo.Users u ON u.UserId = c.UserId;
+
+[00:11:55] 
+-- ERROR executing: 
+CREATE VIEW [dbo].[vGetUserChat]
+WITH SCHEMABINDING
+AS
+SELECT u.UserId, u.UserName, c.ChatId, c.ChatMessage, c.ChannelName, c.TimeStampUtc, c.IsFlagged, c.FlaggedReason
+FROM dbo.Chats c
+INNER JOIN dbo.Users u ON u.UserId = c.UserId;
+-- ('42S01', "[42S01] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]There is already an object named 'vGetUserChat' in the database. (2714) (SQLExecDirectW)")
+
+[00:11:55] 
+-- VIEW: CREATE VIEW [dbo].[vGetIncompleteTts]
+WITH SCHEMABINDING
+AS
+SELECT u.UserId, u.UserName, c.ChatId, c.ChatMessage, c.TimeStampUtc
+FROM dbo.Chats c
+INNER JOIN dbo.Users u ON u.UserId = c.UserId
+WHERE c.IsTextToSpeech = 1 AND c.IsModerated = 1 AND c.IsFlagged = 0 AND c.IsTtsComplete = 0;
+
+[00:11:55] 
+-- ERROR executing: 
+CREATE VIEW [dbo].[vGetIncompleteTts]
+WITH SCHEMABINDING
+AS
+SELECT u.UserId, u.UserName, c.ChatId, c.ChatMessage, c.TimeStampUtc
+FROM dbo.Chats c
+INNER JOIN dbo.Users u ON u.UserId = c.UserId
+WHERE c.IsTextToSpeech = 1 AND c.IsModerated = 1 AND c.IsFlagged = 0 AND c.IsTtsComplete = 0;
+-- ('42S01', "[42S01] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]There is already an object named 'vGetIncompleteTts' in the database. (2714) (SQLExecDirectW)")
+
+[00:11:55] 
+-- VIEW: CREATE VIEW [dbo].[vGetUser]
+WITH SCHEMABINDING
+AS
+SELECT UserId, UserName
+FROM dbo.Users
+
+[00:11:55] 
+-- ERROR executing: 
+CREATE VIEW [dbo].[vGetUser]
+WITH SCHEMABINDING
+AS
+SELECT UserId, UserName
+FROM dbo.Users
+-- ('42S01', "[42S01] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]There is already an object named 'vGetUser' in the database. (2714) (SQLExecDirectW)")
+
+[00:11:55] 
+-- VIEW: CREATE VIEW [dbo].[vGetUncheckedChatsForModeration]
+WITH SCHEMABINDING
+AS
+SELECT ChatId, ChatMessage, TimeStampUtc
+FROM dbo.Chats 
+WHERE IsModerated = 0;
+
+[00:11:55] 
+-- ERROR executing: 
+CREATE VIEW [dbo].[vGetUncheckedChatsForModeration]
+WITH SCHEMABINDING
+AS
+SELECT ChatId, ChatMessage, TimeStampUtc
+FROM dbo.Chats 
+WHERE IsModerated = 0;
+-- ('42S01', "[42S01] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]There is already an object named 'vGetUncheckedChatsForModeration' in the database. (2714) (SQLExecDirectW)")
+
+[00:11:55] 
+-- VIEW: CREATE VIEW [dbo].[vGetUserChatFlagged]
+WITH SCHEMABINDING
+AS
+SELECT u.UserId, u.UserName, c.ChatId, c.ChatMessage, c.ChannelName, c.TimeStampUtc, c.IsFlagged, c.FlaggedReason
+FROM dbo.Chats c
+INNER JOIN dbo.Users u ON u.UserId = c.UserId
+AND c.IsFlagged = 1;
+
+[00:11:55] 
+-- ERROR executing: 
+CREATE VIEW [dbo].[vGetUserChatFlagged]
+WITH SCHEMABINDING
+AS
+SELECT u.UserId, u.UserName, c.ChatId, c.ChatMessage, c.ChannelName, c.TimeStampUtc, c.IsFlagged, c.FlaggedReason
+FROM dbo.Chats c
+INNER JOIN dbo.Users u ON u.UserId = c.UserId
+AND c.IsFlagged = 1;
+-- ('42S01', "[42S01] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]There is already an object named 'vGetUserChatFlagged' in the database. (2714) (SQLExecDirectW)")
+
+[00:11:55] 
+-- VIEW: CREATE VIEW [dbo].[vGetRecentConversation]
+WITH SCHEMABINDING
+AS
+SELECT u.UserName, c.ChatMessage, c.TimeStampUtc AS [UserTimestamp], cb.ResponseMessage AS [BotResponseMessage], cb.TimeStampUtc AS [BotTimestamp]
+FROM dbo.Chats c
+INNER JOIN dbo.Users u ON u.UserId = c.UserId
+INNER JOIN dbo.ChatBotResponse cb ON cb.ChatId = c.ChatId
+WHERE ChannelName = 'bsoverns'
+AND c.IsFlagged = 0 
+AND c.TimeStampUtc >= DATEADD(MINUTE, -30, GETUTCDATE());
+
+[00:11:55] 
+-- ERROR executing: 
+CREATE VIEW [dbo].[vGetRecentConversation]
+WITH SCHEMABINDING
+AS
+SELECT u.UserName, c.ChatMessage, c.TimeStampUtc AS [UserTimestamp], cb.ResponseMessage AS [BotResponseMessage], cb.TimeStampUtc AS [BotTimestamp]
+FROM dbo.Chats c
+INNER JOIN dbo.Users u ON u.UserId = c.UserId
+INNER JOIN dbo.ChatBotResponse cb ON cb.ChatId = c.ChatId
+WHERE ChannelName = 'bsoverns'
+AND c.IsFlagged = 0 
+AND c.TimeStampUtc >= DATEADD(MINUTE, -30, GETUTCDATE());
+-- ('42S01', "[42S01] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]There is already an object named 'vGetRecentConversation' in the database. (2714) (SQLExecDirectW)")
+
+[00:11:55] 
+-- VIEW: CREATE VIEW [dbo].[vGetBotStatus]
+WITH SCHEMABINDING
+AS
+	SELECT BotName, IsLive
+	FROM [dbo].[BotStatus];
+
+[00:11:55] 
+-- ERROR executing: 
+CREATE VIEW [dbo].[vGetBotStatus]
+WITH SCHEMABINDING
+AS
+	SELECT BotName, IsLive
+	FROM [dbo].[BotStatus];
+-- ('42S01', "[42S01] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]There is already an object named 'vGetBotStatus' in the database. (2714) (SQLExecDirectW)")
+
+[00:11:55] 
+-- VIEW: CREATE VIEW [dbo].[vGetModerationActions]
+AS
+SELECT 'Warning' AS [Type], UserId, WarningReason AS [Reason] FROM dbo.Warnings WHERE IsComplete = 0
+UNION ALL
+SELECT 'Timeout' AS [Type], UserId, TimeoutReason AS [Reason] FROM dbo.Timeouts WHERE IsComplete = 0
+UNION ALL
+SELECT 'Ban' AS [Type], UserId, BannedReason AS [Reason] FROM dbo.Bans WHERE IsComplete = 0
+
+[00:11:55] 
+-- ERROR executing: 
+CREATE VIEW [dbo].[vGetModerationActions]
+AS
+SELECT 'Warning' AS [Type], UserId, WarningReason AS [Reason] FROM dbo.Warnings WHERE IsComplete = 0
+UNION ALL
+SELECT 'Timeout' AS [Type], UserId, TimeoutReason AS [Reason] FROM dbo.Timeouts WHERE IsComplete = 0
+UNION ALL
+SELECT 'Ban' AS [Type], UserId, BannedReason AS [Reason] FROM dbo.Bans WHERE IsComplete = 0
+-- ('42S01', "[42S01] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]There is already an object named 'vGetModerationActions' in the database. (2714) (SQLExecDirectW)")
+
+[00:13:06] 
+-- VIEW: CREATE VIEW [dbo].[vGetUserChat]
+WITH SCHEMABINDING
+AS
+SELECT u.UserId, u.UserName, c.ChatId, c.ChatMessage, c.ChannelName, c.TimeStampUtc, c.IsFlagged, c.FlaggedReason
+FROM dbo.Chats c
+INNER JOIN dbo.Users u ON u.UserId = c.UserId;
+
+[00:13:06] 
+-- VIEW: CREATE VIEW [dbo].[vGetIncompleteTts]
+WITH SCHEMABINDING
+AS
+SELECT u.UserId, u.UserName, c.ChatId, c.ChatMessage, c.TimeStampUtc
+FROM dbo.Chats c
+INNER JOIN dbo.Users u ON u.UserId = c.UserId
+WHERE c.IsTextToSpeech = 1 AND c.IsModerated = 1 AND c.IsFlagged = 0 AND c.IsTtsComplete = 0;
+
+[00:13:06] 
+-- VIEW: CREATE VIEW [dbo].[vGetUser]
+WITH SCHEMABINDING
+AS
+SELECT UserId, UserName
+FROM dbo.Users
+
+[00:13:06] 
+-- VIEW: CREATE VIEW [dbo].[vGetUncheckedChatsForModeration]
+WITH SCHEMABINDING
+AS
+SELECT ChatId, ChatMessage, TimeStampUtc
+FROM dbo.Chats 
+WHERE IsModerated = 0;
+
+[00:13:06] 
+-- VIEW: CREATE VIEW [dbo].[vGetUserChatFlagged]
+WITH SCHEMABINDING
+AS
+SELECT u.UserId, u.UserName, c.ChatId, c.ChatMessage, c.ChannelName, c.TimeStampUtc, c.IsFlagged, c.FlaggedReason
+FROM dbo.Chats c
+INNER JOIN dbo.Users u ON u.UserId = c.UserId
+AND c.IsFlagged = 1;
+
+[00:13:06] 
+-- VIEW: CREATE VIEW [dbo].[vGetRecentConversation]
+WITH SCHEMABINDING
+AS
+SELECT u.UserName, c.ChatMessage, c.TimeStampUtc AS [UserTimestamp], cb.ResponseMessage AS [BotResponseMessage], cb.TimeStampUtc AS [BotTimestamp]
+FROM dbo.Chats c
+INNER JOIN dbo.Users u ON u.UserId = c.UserId
+INNER JOIN dbo.ChatBotResponse cb ON cb.ChatId = c.ChatId
+WHERE ChannelName = 'bsoverns'
+AND c.IsFlagged = 0 
+AND c.TimeStampUtc >= DATEADD(MINUTE, -30, GETUTCDATE());
+
+[00:13:06] 
+-- VIEW: CREATE VIEW [dbo].[vGetBotStatus]
+WITH SCHEMABINDING
+AS
+	SELECT BotName, IsLive
+	FROM [dbo].[BotStatus];
+
+[00:13:06] 
+-- VIEW: CREATE VIEW [dbo].[vGetModerationActions]
+AS
+SELECT 'Warning' AS [Type], UserId, WarningReason AS [Reason] FROM dbo.Warnings WHERE IsComplete = 0
+UNION ALL
+SELECT 'Timeout' AS [Type], UserId, TimeoutReason AS [Reason] FROM dbo.Timeouts WHERE IsComplete = 0
+UNION ALL
+SELECT 'Ban' AS [Type], UserId, BannedReason AS [Reason] FROM dbo.Bans WHERE IsComplete = 0
+
+[00:14:31] 
+-- VIEW: CREATE VIEW [dbo].[vGetUserChat]
+WITH SCHEMABINDING
+AS
+SELECT u.UserId, u.UserName, c.ChatId, c.ChatMessage, c.ChannelName, c.TimeStampUtc, c.IsFlagged, c.FlaggedReason
+FROM dbo.Chats c
+INNER JOIN dbo.Users u ON u.UserId = c.UserId;
+
+[00:14:31] 
+-- ERROR executing: 
+CREATE VIEW [dbo].[vGetUserChat]
+WITH SCHEMABINDING
+AS
+SELECT u.UserId, u.UserName, c.ChatId, c.ChatMessage, c.ChannelName, c.TimeStampUtc, c.IsFlagged, c.FlaggedReason
+FROM dbo.Chats c
+INNER JOIN dbo.Users u ON u.UserId = c.UserId;
+-- ('42S01', "[42S01] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]There is already an object named 'vGetUserChat' in the database. (2714) (SQLExecDirectW)")
+
+[00:14:31] 
+-- VIEW: CREATE VIEW [dbo].[vGetIncompleteTts]
+WITH SCHEMABINDING
+AS
+SELECT u.UserId, u.UserName, c.ChatId, c.ChatMessage, c.TimeStampUtc
+FROM dbo.Chats c
+INNER JOIN dbo.Users u ON u.UserId = c.UserId
+WHERE c.IsTextToSpeech = 1 AND c.IsModerated = 1 AND c.IsFlagged = 0 AND c.IsTtsComplete = 0;
+
+[00:14:31] 
+-- ERROR executing: 
+CREATE VIEW [dbo].[vGetIncompleteTts]
+WITH SCHEMABINDING
+AS
+SELECT u.UserId, u.UserName, c.ChatId, c.ChatMessage, c.TimeStampUtc
+FROM dbo.Chats c
+INNER JOIN dbo.Users u ON u.UserId = c.UserId
+WHERE c.IsTextToSpeech = 1 AND c.IsModerated = 1 AND c.IsFlagged = 0 AND c.IsTtsComplete = 0;
+-- ('42S01', "[42S01] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]There is already an object named 'vGetIncompleteTts' in the database. (2714) (SQLExecDirectW)")
+
+[00:14:31] 
+-- VIEW: CREATE VIEW [dbo].[vGetUser]
+WITH SCHEMABINDING
+AS
+SELECT UserId, UserName
+FROM dbo.Users
+
+[00:14:31] 
+-- ERROR executing: 
+CREATE VIEW [dbo].[vGetUser]
+WITH SCHEMABINDING
+AS
+SELECT UserId, UserName
+FROM dbo.Users
+-- ('42S01', "[42S01] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]There is already an object named 'vGetUser' in the database. (2714) (SQLExecDirectW)")
+
+[00:14:31] 
+-- VIEW: CREATE VIEW [dbo].[vGetUncheckedChatsForModeration]
+WITH SCHEMABINDING
+AS
+SELECT ChatId, ChatMessage, TimeStampUtc
+FROM dbo.Chats 
+WHERE IsModerated = 0;
+
+[00:14:31] 
+-- ERROR executing: 
+CREATE VIEW [dbo].[vGetUncheckedChatsForModeration]
+WITH SCHEMABINDING
+AS
+SELECT ChatId, ChatMessage, TimeStampUtc
+FROM dbo.Chats 
+WHERE IsModerated = 0;
+-- ('42S01', "[42S01] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]There is already an object named 'vGetUncheckedChatsForModeration' in the database. (2714) (SQLExecDirectW)")
+
+[00:14:31] 
+-- VIEW: CREATE VIEW [dbo].[vGetUserChatFlagged]
+WITH SCHEMABINDING
+AS
+SELECT u.UserId, u.UserName, c.ChatId, c.ChatMessage, c.ChannelName, c.TimeStampUtc, c.IsFlagged, c.FlaggedReason
+FROM dbo.Chats c
+INNER JOIN dbo.Users u ON u.UserId = c.UserId
+AND c.IsFlagged = 1;
+
+[00:14:31] 
+-- ERROR executing: 
+CREATE VIEW [dbo].[vGetUserChatFlagged]
+WITH SCHEMABINDING
+AS
+SELECT u.UserId, u.UserName, c.ChatId, c.ChatMessage, c.ChannelName, c.TimeStampUtc, c.IsFlagged, c.FlaggedReason
+FROM dbo.Chats c
+INNER JOIN dbo.Users u ON u.UserId = c.UserId
+AND c.IsFlagged = 1;
+-- ('42S01', "[42S01] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]There is already an object named 'vGetUserChatFlagged' in the database. (2714) (SQLExecDirectW)")
+
+[00:14:31] 
+-- VIEW: CREATE VIEW [dbo].[vGetRecentConversation]
+WITH SCHEMABINDING
+AS
+SELECT u.UserName, c.ChatMessage, c.TimeStampUtc AS [UserTimestamp], cb.ResponseMessage AS [BotResponseMessage], cb.TimeStampUtc AS [BotTimestamp]
+FROM dbo.Chats c
+INNER JOIN dbo.Users u ON u.UserId = c.UserId
+INNER JOIN dbo.ChatBotResponse cb ON cb.ChatId = c.ChatId
+WHERE ChannelName = 'bsoverns'
+AND c.IsFlagged = 0 
+AND c.TimeStampUtc >= DATEADD(MINUTE, -30, GETUTCDATE());
+
+[00:14:31] 
+-- ERROR executing: 
+CREATE VIEW [dbo].[vGetRecentConversation]
+WITH SCHEMABINDING
+AS
+SELECT u.UserName, c.ChatMessage, c.TimeStampUtc AS [UserTimestamp], cb.ResponseMessage AS [BotResponseMessage], cb.TimeStampUtc AS [BotTimestamp]
+FROM dbo.Chats c
+INNER JOIN dbo.Users u ON u.UserId = c.UserId
+INNER JOIN dbo.ChatBotResponse cb ON cb.ChatId = c.ChatId
+WHERE ChannelName = 'bsoverns'
+AND c.IsFlagged = 0 
+AND c.TimeStampUtc >= DATEADD(MINUTE, -30, GETUTCDATE());
+-- ('42S01', "[42S01] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]There is already an object named 'vGetRecentConversation' in the database. (2714) (SQLExecDirectW)")
+
+[00:14:31] 
+-- VIEW: CREATE VIEW [dbo].[vGetBotStatus]
+WITH SCHEMABINDING
+AS
+	SELECT BotName, IsLive
+	FROM [dbo].[BotStatus];
+
+[00:14:31] 
+-- ERROR executing: 
+CREATE VIEW [dbo].[vGetBotStatus]
+WITH SCHEMABINDING
+AS
+	SELECT BotName, IsLive
+	FROM [dbo].[BotStatus];
+-- ('42S01', "[42S01] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]There is already an object named 'vGetBotStatus' in the database. (2714) (SQLExecDirectW)")
+
+[00:14:31] 
+-- VIEW: CREATE VIEW [dbo].[vGetModerationActions]
+AS
+SELECT 'Warning' AS [Type], UserId, WarningReason AS [Reason] FROM dbo.Warnings WHERE IsComplete = 0
+UNION ALL
+SELECT 'Timeout' AS [Type], UserId, TimeoutReason AS [Reason] FROM dbo.Timeouts WHERE IsComplete = 0
+UNION ALL
+SELECT 'Ban' AS [Type], UserId, BannedReason AS [Reason] FROM dbo.Bans WHERE IsComplete = 0
+
+[00:14:31] 
+-- ERROR executing: 
+CREATE VIEW [dbo].[vGetModerationActions]
+AS
+SELECT 'Warning' AS [Type], UserId, WarningReason AS [Reason] FROM dbo.Warnings WHERE IsComplete = 0
+UNION ALL
+SELECT 'Timeout' AS [Type], UserId, TimeoutReason AS [Reason] FROM dbo.Timeouts WHERE IsComplete = 0
+UNION ALL
+SELECT 'Ban' AS [Type], UserId, BannedReason AS [Reason] FROM dbo.Bans WHERE IsComplete = 0
+-- ('42S01', "[42S01] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]There is already an object named 'vGetModerationActions' in the database. (2714) (SQLExecDirectW)")
+
+[00:27:01] 
+-- VIEW: CREATE VIEW [dbo].[vGetUserChat]
+WITH SCHEMABINDING
+AS
+SELECT u.UserId, u.UserName, c.ChatId, c.ChatMessage, c.ChannelName, c.TimeStampUtc, c.IsFlagged, c.FlaggedReason
+FROM dbo.Chats c
+INNER JOIN dbo.Users u ON u.UserId = c.UserId;
+
+[00:27:01] 
+-- ERROR executing: 
+CREATE VIEW [dbo].[vGetUserChat]
+WITH SCHEMABINDING
+AS
+SELECT u.UserId, u.UserName, c.ChatId, c.ChatMessage, c.ChannelName, c.TimeStampUtc, c.IsFlagged, c.FlaggedReason
+FROM dbo.Chats c
+INNER JOIN dbo.Users u ON u.UserId = c.UserId;
+-- ('42S01', "[42S01] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]There is already an object named 'vGetUserChat' in the database. (2714) (SQLExecDirectW)")
+
+[00:27:01] 
+-- VIEW: CREATE VIEW [dbo].[vGetIncompleteTts]
+WITH SCHEMABINDING
+AS
+SELECT u.UserId, u.UserName, c.ChatId, c.ChatMessage, c.TimeStampUtc
+FROM dbo.Chats c
+INNER JOIN dbo.Users u ON u.UserId = c.UserId
+WHERE c.IsTextToSpeech = 1 AND c.IsModerated = 1 AND c.IsFlagged = 0 AND c.IsTtsComplete = 0;
+
+[00:27:01] 
+-- ERROR executing: 
+CREATE VIEW [dbo].[vGetIncompleteTts]
+WITH SCHEMABINDING
+AS
+SELECT u.UserId, u.UserName, c.ChatId, c.ChatMessage, c.TimeStampUtc
+FROM dbo.Chats c
+INNER JOIN dbo.Users u ON u.UserId = c.UserId
+WHERE c.IsTextToSpeech = 1 AND c.IsModerated = 1 AND c.IsFlagged = 0 AND c.IsTtsComplete = 0;
+-- ('42S01', "[42S01] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]There is already an object named 'vGetIncompleteTts' in the database. (2714) (SQLExecDirectW)")
+
+[00:27:01] 
+-- VIEW: CREATE VIEW [dbo].[vGetUser]
+WITH SCHEMABINDING
+AS
+SELECT UserId, UserName
+FROM dbo.Users
+
+[00:27:01] 
+-- ERROR executing: 
+CREATE VIEW [dbo].[vGetUser]
+WITH SCHEMABINDING
+AS
+SELECT UserId, UserName
+FROM dbo.Users
+-- ('42S01', "[42S01] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]There is already an object named 'vGetUser' in the database. (2714) (SQLExecDirectW)")
+
+[00:27:01] 
+-- VIEW: CREATE VIEW [dbo].[vGetUncheckedChatsForModeration]
+WITH SCHEMABINDING
+AS
+SELECT ChatId, ChatMessage, TimeStampUtc
+FROM dbo.Chats 
+WHERE IsModerated = 0;
+
+[00:27:01] 
+-- ERROR executing: 
+CREATE VIEW [dbo].[vGetUncheckedChatsForModeration]
+WITH SCHEMABINDING
+AS
+SELECT ChatId, ChatMessage, TimeStampUtc
+FROM dbo.Chats 
+WHERE IsModerated = 0;
+-- ('42S01', "[42S01] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]There is already an object named 'vGetUncheckedChatsForModeration' in the database. (2714) (SQLExecDirectW)")
+
+[00:27:01] 
+-- VIEW: CREATE VIEW [dbo].[vGetUserChatFlagged]
+WITH SCHEMABINDING
+AS
+SELECT u.UserId, u.UserName, c.ChatId, c.ChatMessage, c.ChannelName, c.TimeStampUtc, c.IsFlagged, c.FlaggedReason
+FROM dbo.Chats c
+INNER JOIN dbo.Users u ON u.UserId = c.UserId
+AND c.IsFlagged = 1;
+
+[00:27:01] 
+-- ERROR executing: 
+CREATE VIEW [dbo].[vGetUserChatFlagged]
+WITH SCHEMABINDING
+AS
+SELECT u.UserId, u.UserName, c.ChatId, c.ChatMessage, c.ChannelName, c.TimeStampUtc, c.IsFlagged, c.FlaggedReason
+FROM dbo.Chats c
+INNER JOIN dbo.Users u ON u.UserId = c.UserId
+AND c.IsFlagged = 1;
+-- ('42S01', "[42S01] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]There is already an object named 'vGetUserChatFlagged' in the database. (2714) (SQLExecDirectW)")
+
+[00:27:01] 
+-- VIEW: CREATE VIEW [dbo].[vGetRecentConversation]
+WITH SCHEMABINDING
+AS
+SELECT u.UserName, c.ChatMessage, c.TimeStampUtc AS [UserTimestamp], cb.ResponseMessage AS [BotResponseMessage], cb.TimeStampUtc AS [BotTimestamp]
+FROM dbo.Chats c
+INNER JOIN dbo.Users u ON u.UserId = c.UserId
+INNER JOIN dbo.ChatBotResponse cb ON cb.ChatId = c.ChatId
+WHERE ChannelName = 'bsoverns'
+AND c.IsFlagged = 0 
+AND c.TimeStampUtc >= DATEADD(MINUTE, -30, GETUTCDATE());
+
+[00:27:01] 
+-- ERROR executing: 
+CREATE VIEW [dbo].[vGetRecentConversation]
+WITH SCHEMABINDING
+AS
+SELECT u.UserName, c.ChatMessage, c.TimeStampUtc AS [UserTimestamp], cb.ResponseMessage AS [BotResponseMessage], cb.TimeStampUtc AS [BotTimestamp]
+FROM dbo.Chats c
+INNER JOIN dbo.Users u ON u.UserId = c.UserId
+INNER JOIN dbo.ChatBotResponse cb ON cb.ChatId = c.ChatId
+WHERE ChannelName = 'bsoverns'
+AND c.IsFlagged = 0 
+AND c.TimeStampUtc >= DATEADD(MINUTE, -30, GETUTCDATE());
+-- ('42S01', "[42S01] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]There is already an object named 'vGetRecentConversation' in the database. (2714) (SQLExecDirectW)")
+
+[00:27:01] 
+-- VIEW: CREATE VIEW [dbo].[vGetBotStatus]
+WITH SCHEMABINDING
+AS
+	SELECT BotName, IsLive
+	FROM [dbo].[BotStatus];
+
+[00:27:01] 
+-- ERROR executing: 
+CREATE VIEW [dbo].[vGetBotStatus]
+WITH SCHEMABINDING
+AS
+	SELECT BotName, IsLive
+	FROM [dbo].[BotStatus];
+-- ('42S01', "[42S01] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]There is already an object named 'vGetBotStatus' in the database. (2714) (SQLExecDirectW)")
+
+[00:27:01] 
+-- VIEW: CREATE VIEW [dbo].[vGetModerationActions]
+AS
+SELECT 'Warning' AS [Type], UserId, WarningReason AS [Reason] FROM dbo.Warnings WHERE IsComplete = 0
+UNION ALL
+SELECT 'Timeout' AS [Type], UserId, TimeoutReason AS [Reason] FROM dbo.Timeouts WHERE IsComplete = 0
+UNION ALL
+SELECT 'Ban' AS [Type], UserId, BannedReason AS [Reason] FROM dbo.Bans WHERE IsComplete = 0
+
+[00:27:01] 
+-- ERROR executing: 
+CREATE VIEW [dbo].[vGetModerationActions]
+AS
+SELECT 'Warning' AS [Type], UserId, WarningReason AS [Reason] FROM dbo.Warnings WHERE IsComplete = 0
+UNION ALL
+SELECT 'Timeout' AS [Type], UserId, TimeoutReason AS [Reason] FROM dbo.Timeouts WHERE IsComplete = 0
+UNION ALL
+SELECT 'Ban' AS [Type], UserId, BannedReason AS [Reason] FROM dbo.Bans WHERE IsComplete = 0
+-- ('42S01', "[42S01] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]There is already an object named 'vGetModerationActions' in the database. (2714) (SQLExecDirectW)")
+
+[00:31:00] 
+-- VIEW: CREATE VIEW [dbo].[vGetUserChat]
+WITH SCHEMABINDING
+AS
+SELECT u.UserId, u.UserName, c.ChatId, c.ChatMessage, c.ChannelName, c.TimeStampUtc, c.IsFlagged, c.FlaggedReason
+FROM dbo.Chats c
+INNER JOIN dbo.Users u ON u.UserId = c.UserId;
+
+[00:31:00] 
+-- ERROR executing: 
+CREATE VIEW [dbo].[vGetUserChat]
+WITH SCHEMABINDING
+AS
+SELECT u.UserId, u.UserName, c.ChatId, c.ChatMessage, c.ChannelName, c.TimeStampUtc, c.IsFlagged, c.FlaggedReason
+FROM dbo.Chats c
+INNER JOIN dbo.Users u ON u.UserId = c.UserId;
+-- ('42S01', "[42S01] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]There is already an object named 'vGetUserChat' in the database. (2714) (SQLExecDirectW)")
+
+[00:31:00] 
+-- VIEW: CREATE VIEW [dbo].[vGetIncompleteTts]
+WITH SCHEMABINDING
+AS
+SELECT u.UserId, u.UserName, c.ChatId, c.ChatMessage, c.TimeStampUtc
+FROM dbo.Chats c
+INNER JOIN dbo.Users u ON u.UserId = c.UserId
+WHERE c.IsTextToSpeech = 1 AND c.IsModerated = 1 AND c.IsFlagged = 0 AND c.IsTtsComplete = 0;
+
+[00:31:00] 
+-- ERROR executing: 
+CREATE VIEW [dbo].[vGetIncompleteTts]
+WITH SCHEMABINDING
+AS
+SELECT u.UserId, u.UserName, c.ChatId, c.ChatMessage, c.TimeStampUtc
+FROM dbo.Chats c
+INNER JOIN dbo.Users u ON u.UserId = c.UserId
+WHERE c.IsTextToSpeech = 1 AND c.IsModerated = 1 AND c.IsFlagged = 0 AND c.IsTtsComplete = 0;
+-- ('42S01', "[42S01] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]There is already an object named 'vGetIncompleteTts' in the database. (2714) (SQLExecDirectW)")
+
+[00:31:00] 
+-- VIEW: CREATE VIEW [dbo].[vGetUser]
+WITH SCHEMABINDING
+AS
+SELECT UserId, UserName
+FROM dbo.Users
+
+[00:31:00] 
+-- ERROR executing: 
+CREATE VIEW [dbo].[vGetUser]
+WITH SCHEMABINDING
+AS
+SELECT UserId, UserName
+FROM dbo.Users
+-- ('42S01', "[42S01] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]There is already an object named 'vGetUser' in the database. (2714) (SQLExecDirectW)")
+
+[00:31:00] 
+-- VIEW: CREATE VIEW [dbo].[vGetUncheckedChatsForModeration]
+WITH SCHEMABINDING
+AS
+SELECT ChatId, ChatMessage, TimeStampUtc
+FROM dbo.Chats 
+WHERE IsModerated = 0;
+
+[00:31:00] 
+-- ERROR executing: 
+CREATE VIEW [dbo].[vGetUncheckedChatsForModeration]
+WITH SCHEMABINDING
+AS
+SELECT ChatId, ChatMessage, TimeStampUtc
+FROM dbo.Chats 
+WHERE IsModerated = 0;
+-- ('42S01', "[42S01] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]There is already an object named 'vGetUncheckedChatsForModeration' in the database. (2714) (SQLExecDirectW)")
+
+[00:31:00] 
+-- VIEW: CREATE VIEW [dbo].[vGetUserChatFlagged]
+WITH SCHEMABINDING
+AS
+SELECT u.UserId, u.UserName, c.ChatId, c.ChatMessage, c.ChannelName, c.TimeStampUtc, c.IsFlagged, c.FlaggedReason
+FROM dbo.Chats c
+INNER JOIN dbo.Users u ON u.UserId = c.UserId
+AND c.IsFlagged = 1;
+
+[00:31:00] 
+-- ERROR executing: 
+CREATE VIEW [dbo].[vGetUserChatFlagged]
+WITH SCHEMABINDING
+AS
+SELECT u.UserId, u.UserName, c.ChatId, c.ChatMessage, c.ChannelName, c.TimeStampUtc, c.IsFlagged, c.FlaggedReason
+FROM dbo.Chats c
+INNER JOIN dbo.Users u ON u.UserId = c.UserId
+AND c.IsFlagged = 1;
+-- ('42S01', "[42S01] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]There is already an object named 'vGetUserChatFlagged' in the database. (2714) (SQLExecDirectW)")
+
+[00:31:00] 
+-- VIEW: CREATE VIEW [dbo].[vGetRecentConversation]
+WITH SCHEMABINDING
+AS
+SELECT u.UserName, c.ChatMessage, c.TimeStampUtc AS [UserTimestamp], cb.ResponseMessage AS [BotResponseMessage], cb.TimeStampUtc AS [BotTimestamp]
+FROM dbo.Chats c
+INNER JOIN dbo.Users u ON u.UserId = c.UserId
+INNER JOIN dbo.ChatBotResponse cb ON cb.ChatId = c.ChatId
+WHERE ChannelName = 'bsoverns'
+AND c.IsFlagged = 0 
+AND c.TimeStampUtc >= DATEADD(MINUTE, -30, GETUTCDATE());
+
+[00:31:00] 
+-- ERROR executing: 
+CREATE VIEW [dbo].[vGetRecentConversation]
+WITH SCHEMABINDING
+AS
+SELECT u.UserName, c.ChatMessage, c.TimeStampUtc AS [UserTimestamp], cb.ResponseMessage AS [BotResponseMessage], cb.TimeStampUtc AS [BotTimestamp]
+FROM dbo.Chats c
+INNER JOIN dbo.Users u ON u.UserId = c.UserId
+INNER JOIN dbo.ChatBotResponse cb ON cb.ChatId = c.ChatId
+WHERE ChannelName = 'bsoverns'
+AND c.IsFlagged = 0 
+AND c.TimeStampUtc >= DATEADD(MINUTE, -30, GETUTCDATE());
+-- ('42S01', "[42S01] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]There is already an object named 'vGetRecentConversation' in the database. (2714) (SQLExecDirectW)")
+
+[00:31:00] 
+-- VIEW: CREATE VIEW [dbo].[vGetBotStatus]
+WITH SCHEMABINDING
+AS
+	SELECT BotName, IsLive
+	FROM [dbo].[BotStatus];
+
+[00:31:00] 
+-- ERROR executing: 
+CREATE VIEW [dbo].[vGetBotStatus]
+WITH SCHEMABINDING
+AS
+	SELECT BotName, IsLive
+	FROM [dbo].[BotStatus];
+-- ('42S01', "[42S01] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]There is already an object named 'vGetBotStatus' in the database. (2714) (SQLExecDirectW)")
+
+[00:31:00] 
+-- VIEW: CREATE VIEW [dbo].[vGetModerationActions]
+AS
+SELECT 'Warning' AS [Type], UserId, WarningReason AS [Reason] FROM dbo.Warnings WHERE IsComplete = 0
+UNION ALL
+SELECT 'Timeout' AS [Type], UserId, TimeoutReason AS [Reason] FROM dbo.Timeouts WHERE IsComplete = 0
+UNION ALL
+SELECT 'Ban' AS [Type], UserId, BannedReason AS [Reason] FROM dbo.Bans WHERE IsComplete = 0
+
+[00:31:00] 
+-- ERROR executing: 
+CREATE VIEW [dbo].[vGetModerationActions]
+AS
+SELECT 'Warning' AS [Type], UserId, WarningReason AS [Reason] FROM dbo.Warnings WHERE IsComplete = 0
+UNION ALL
+SELECT 'Timeout' AS [Type], UserId, TimeoutReason AS [Reason] FROM dbo.Timeouts WHERE IsComplete = 0
+UNION ALL
+SELECT 'Ban' AS [Type], UserId, BannedReason AS [Reason] FROM dbo.Bans WHERE IsComplete = 0
+-- ('42S01', "[42S01] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]There is already an object named 'vGetModerationActions' in the database. (2714) (SQLExecDirectW)")
+
+[00:31:16] 
+-- VIEW: CREATE VIEW [dbo].[vGetUserChat]
+WITH SCHEMABINDING
+AS
+SELECT u.UserId, u.UserName, c.ChatId, c.ChatMessage, c.ChannelName, c.TimeStampUtc, c.IsFlagged, c.FlaggedReason
+FROM dbo.Chats c
+INNER JOIN dbo.Users u ON u.UserId = c.UserId;
+
+[00:31:16] 
+-- VIEW: CREATE VIEW [dbo].[vGetIncompleteTts]
+WITH SCHEMABINDING
+AS
+SELECT u.UserId, u.UserName, c.ChatId, c.ChatMessage, c.TimeStampUtc
+FROM dbo.Chats c
+INNER JOIN dbo.Users u ON u.UserId = c.UserId
+WHERE c.IsTextToSpeech = 1 AND c.IsModerated = 1 AND c.IsFlagged = 0 AND c.IsTtsComplete = 0;
+
+[00:31:16] 
+-- VIEW: CREATE VIEW [dbo].[vGetUser]
+WITH SCHEMABINDING
+AS
+SELECT UserId, UserName
+FROM dbo.Users
+
+[00:31:16] 
+-- VIEW: CREATE VIEW [dbo].[vGetUncheckedChatsForModeration]
+WITH SCHEMABINDING
+AS
+SELECT ChatId, ChatMessage, TimeStampUtc
+FROM dbo.Chats 
+WHERE IsModerated = 0;
+
+[00:31:16] 
+-- VIEW: CREATE VIEW [dbo].[vGetUserChatFlagged]
+WITH SCHEMABINDING
+AS
+SELECT u.UserId, u.UserName, c.ChatId, c.ChatMessage, c.ChannelName, c.TimeStampUtc, c.IsFlagged, c.FlaggedReason
+FROM dbo.Chats c
+INNER JOIN dbo.Users u ON u.UserId = c.UserId
+AND c.IsFlagged = 1;
+
+[00:31:16] 
+-- VIEW: CREATE VIEW [dbo].[vGetRecentConversation]
+WITH SCHEMABINDING
+AS
+SELECT u.UserName, c.ChatMessage, c.TimeStampUtc AS [UserTimestamp], cb.ResponseMessage AS [BotResponseMessage], cb.TimeStampUtc AS [BotTimestamp]
+FROM dbo.Chats c
+INNER JOIN dbo.Users u ON u.UserId = c.UserId
+INNER JOIN dbo.ChatBotResponse cb ON cb.ChatId = c.ChatId
+WHERE ChannelName = 'bsoverns'
+AND c.IsFlagged = 0 
+AND c.TimeStampUtc >= DATEADD(MINUTE, -30, GETUTCDATE());
+
+[00:31:16] 
+-- VIEW: CREATE VIEW [dbo].[vGetBotStatus]
+WITH SCHEMABINDING
+AS
+	SELECT BotName, IsLive
+	FROM [dbo].[BotStatus];
+
+[00:31:16] 
+-- VIEW: CREATE VIEW [dbo].[vGetModerationActions]
+AS
+SELECT 'Warning' AS [Type], UserId, WarningReason AS [Reason] FROM dbo.Warnings WHERE IsComplete = 0
+UNION ALL
+SELECT 'Timeout' AS [Type], UserId, TimeoutReason AS [Reason] FROM dbo.Timeouts WHERE IsComplete = 0
+UNION ALL
+SELECT 'Ban' AS [Type], UserId, BannedReason AS [Reason] FROM dbo.Bans WHERE IsComplete = 0
+
+[00:32:09] 
+-- VIEW: CREATE VIEW [dbo].[vGetUserChat]
+WITH SCHEMABINDING
+AS
+SELECT u.UserId, u.UserName, c.ChatId, c.ChatMessage, c.ChannelName, c.TimeStampUtc, c.IsFlagged, c.FlaggedReason
+FROM dbo.Chats c
+INNER JOIN dbo.Users u ON u.UserId = c.UserId;
+
+[00:32:09] 
+-- ERROR executing: 
+CREATE VIEW [dbo].[vGetUserChat]
+WITH SCHEMABINDING
+AS
+SELECT u.UserId, u.UserName, c.ChatId, c.ChatMessage, c.ChannelName, c.TimeStampUtc, c.IsFlagged, c.FlaggedReason
+FROM dbo.Chats c
+INNER JOIN dbo.Users u ON u.UserId = c.UserId;
+-- ('42S01', "[42S01] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]There is already an object named 'vGetUserChat' in the database. (2714) (SQLExecDirectW)")
+
+[00:32:09] 
+-- VIEW: CREATE VIEW [dbo].[vGetIncompleteTts]
+WITH SCHEMABINDING
+AS
+SELECT u.UserId, u.UserName, c.ChatId, c.ChatMessage, c.TimeStampUtc
+FROM dbo.Chats c
+INNER JOIN dbo.Users u ON u.UserId = c.UserId
+WHERE c.IsTextToSpeech = 1 AND c.IsModerated = 1 AND c.IsFlagged = 0 AND c.IsTtsComplete = 0;
+
+[00:32:09] 
+-- ERROR executing: 
+CREATE VIEW [dbo].[vGetIncompleteTts]
+WITH SCHEMABINDING
+AS
+SELECT u.UserId, u.UserName, c.ChatId, c.ChatMessage, c.TimeStampUtc
+FROM dbo.Chats c
+INNER JOIN dbo.Users u ON u.UserId = c.UserId
+WHERE c.IsTextToSpeech = 1 AND c.IsModerated = 1 AND c.IsFlagged = 0 AND c.IsTtsComplete = 0;
+-- ('42S01', "[42S01] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]There is already an object named 'vGetIncompleteTts' in the database. (2714) (SQLExecDirectW)")
+
+[00:32:09] 
+-- VIEW: CREATE VIEW [dbo].[vGetUser]
+WITH SCHEMABINDING
+AS
+SELECT UserId, UserName
+FROM dbo.Users
+
+[00:32:09] 
+-- ERROR executing: 
+CREATE VIEW [dbo].[vGetUser]
+WITH SCHEMABINDING
+AS
+SELECT UserId, UserName
+FROM dbo.Users
+-- ('42S01', "[42S01] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]There is already an object named 'vGetUser' in the database. (2714) (SQLExecDirectW)")
+
+[00:32:09] 
+-- VIEW: CREATE VIEW [dbo].[vGetUncheckedChatsForModeration]
+WITH SCHEMABINDING
+AS
+SELECT ChatId, ChatMessage, TimeStampUtc
+FROM dbo.Chats 
+WHERE IsModerated = 0;
+
+[00:32:09] 
+-- ERROR executing: 
+CREATE VIEW [dbo].[vGetUncheckedChatsForModeration]
+WITH SCHEMABINDING
+AS
+SELECT ChatId, ChatMessage, TimeStampUtc
+FROM dbo.Chats 
+WHERE IsModerated = 0;
+-- ('42S01', "[42S01] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]There is already an object named 'vGetUncheckedChatsForModeration' in the database. (2714) (SQLExecDirectW)")
+
+[00:32:09] 
+-- VIEW: CREATE VIEW [dbo].[vGetUserChatFlagged]
+WITH SCHEMABINDING
+AS
+SELECT u.UserId, u.UserName, c.ChatId, c.ChatMessage, c.ChannelName, c.TimeStampUtc, c.IsFlagged, c.FlaggedReason
+FROM dbo.Chats c
+INNER JOIN dbo.Users u ON u.UserId = c.UserId
+AND c.IsFlagged = 1;
+
+[00:32:09] 
+-- ERROR executing: 
+CREATE VIEW [dbo].[vGetUserChatFlagged]
+WITH SCHEMABINDING
+AS
+SELECT u.UserId, u.UserName, c.ChatId, c.ChatMessage, c.ChannelName, c.TimeStampUtc, c.IsFlagged, c.FlaggedReason
+FROM dbo.Chats c
+INNER JOIN dbo.Users u ON u.UserId = c.UserId
+AND c.IsFlagged = 1;
+-- ('42S01', "[42S01] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]There is already an object named 'vGetUserChatFlagged' in the database. (2714) (SQLExecDirectW)")
+
+[00:32:09] 
+-- VIEW: CREATE VIEW [dbo].[vGetRecentConversation]
+WITH SCHEMABINDING
+AS
+SELECT u.UserName, c.ChatMessage, c.TimeStampUtc AS [UserTimestamp], cb.ResponseMessage AS [BotResponseMessage], cb.TimeStampUtc AS [BotTimestamp]
+FROM dbo.Chats c
+INNER JOIN dbo.Users u ON u.UserId = c.UserId
+INNER JOIN dbo.ChatBotResponse cb ON cb.ChatId = c.ChatId
+WHERE ChannelName = 'bsoverns'
+AND c.IsFlagged = 0 
+AND c.TimeStampUtc >= DATEADD(MINUTE, -30, GETUTCDATE());
+
+[00:32:09] 
+-- ERROR executing: 
+CREATE VIEW [dbo].[vGetRecentConversation]
+WITH SCHEMABINDING
+AS
+SELECT u.UserName, c.ChatMessage, c.TimeStampUtc AS [UserTimestamp], cb.ResponseMessage AS [BotResponseMessage], cb.TimeStampUtc AS [BotTimestamp]
+FROM dbo.Chats c
+INNER JOIN dbo.Users u ON u.UserId = c.UserId
+INNER JOIN dbo.ChatBotResponse cb ON cb.ChatId = c.ChatId
+WHERE ChannelName = 'bsoverns'
+AND c.IsFlagged = 0 
+AND c.TimeStampUtc >= DATEADD(MINUTE, -30, GETUTCDATE());
+-- ('42S01', "[42S01] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]There is already an object named 'vGetRecentConversation' in the database. (2714) (SQLExecDirectW)")
+
+[00:32:09] 
+-- VIEW: CREATE VIEW [dbo].[vGetBotStatus]
+WITH SCHEMABINDING
+AS
+	SELECT BotName, IsLive
+	FROM [dbo].[BotStatus];
+
+[00:32:09] 
+-- ERROR executing: 
+CREATE VIEW [dbo].[vGetBotStatus]
+WITH SCHEMABINDING
+AS
+	SELECT BotName, IsLive
+	FROM [dbo].[BotStatus];
+-- ('42S01', "[42S01] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]There is already an object named 'vGetBotStatus' in the database. (2714) (SQLExecDirectW)")
+
+[00:32:09] 
+-- VIEW: CREATE VIEW [dbo].[vGetModerationActions]
+AS
+SELECT 'Warning' AS [Type], UserId, WarningReason AS [Reason] FROM dbo.Warnings WHERE IsComplete = 0
+UNION ALL
+SELECT 'Timeout' AS [Type], UserId, TimeoutReason AS [Reason] FROM dbo.Timeouts WHERE IsComplete = 0
+UNION ALL
+SELECT 'Ban' AS [Type], UserId, BannedReason AS [Reason] FROM dbo.Bans WHERE IsComplete = 0
+
+[00:32:09] 
+-- ERROR executing: 
+CREATE VIEW [dbo].[vGetModerationActions]
+AS
+SELECT 'Warning' AS [Type], UserId, WarningReason AS [Reason] FROM dbo.Warnings WHERE IsComplete = 0
+UNION ALL
+SELECT 'Timeout' AS [Type], UserId, TimeoutReason AS [Reason] FROM dbo.Timeouts WHERE IsComplete = 0
+UNION ALL
+SELECT 'Ban' AS [Type], UserId, BannedReason AS [Reason] FROM dbo.Bans WHERE IsComplete = 0
+-- ('42S01', "[42S01] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]There is already an object named 'vGetModerationActions' in the database. (2714) (SQLExecDirectW)")
+
+[00:38:19] 
+-- VIEW: CREATE VIEW [dbo].[vGetUserChat]
+WITH SCHEMABINDING
+AS
+SELECT u.UserId, u.UserName, c.ChatId, c.ChatMessage, c.ChannelName, c.TimeStampUtc, c.IsFlagged, c.FlaggedReason
+FROM dbo.Chats c
+INNER JOIN dbo.Users u ON u.UserId = c.UserId;
+
+[00:38:19] 
+-- ERROR executing: 
+CREATE VIEW [dbo].[vGetUserChat]
+WITH SCHEMABINDING
+AS
+SELECT u.UserId, u.UserName, c.ChatId, c.ChatMessage, c.ChannelName, c.TimeStampUtc, c.IsFlagged, c.FlaggedReason
+FROM dbo.Chats c
+INNER JOIN dbo.Users u ON u.UserId = c.UserId;
+-- ('42S01', "[42S01] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]There is already an object named 'vGetUserChat' in the database. (2714) (SQLExecDirectW)")
+
+[00:38:19] 
+-- VIEW: CREATE VIEW [dbo].[vGetIncompleteTts]
+WITH SCHEMABINDING
+AS
+SELECT u.UserId, u.UserName, c.ChatId, c.ChatMessage, c.TimeStampUtc
+FROM dbo.Chats c
+INNER JOIN dbo.Users u ON u.UserId = c.UserId
+WHERE c.IsTextToSpeech = 1 AND c.IsModerated = 1 AND c.IsFlagged = 0 AND c.IsTtsComplete = 0;
+
+[00:38:19] 
+-- ERROR executing: 
+CREATE VIEW [dbo].[vGetIncompleteTts]
+WITH SCHEMABINDING
+AS
+SELECT u.UserId, u.UserName, c.ChatId, c.ChatMessage, c.TimeStampUtc
+FROM dbo.Chats c
+INNER JOIN dbo.Users u ON u.UserId = c.UserId
+WHERE c.IsTextToSpeech = 1 AND c.IsModerated = 1 AND c.IsFlagged = 0 AND c.IsTtsComplete = 0;
+-- ('42S01', "[42S01] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]There is already an object named 'vGetIncompleteTts' in the database. (2714) (SQLExecDirectW)")
+
+[00:38:19] 
+-- VIEW: CREATE VIEW [dbo].[vGetUser]
+WITH SCHEMABINDING
+AS
+SELECT UserId, UserName
+FROM dbo.Users
+
+[00:38:19] 
+-- ERROR executing: 
+CREATE VIEW [dbo].[vGetUser]
+WITH SCHEMABINDING
+AS
+SELECT UserId, UserName
+FROM dbo.Users
+-- ('42S01', "[42S01] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]There is already an object named 'vGetUser' in the database. (2714) (SQLExecDirectW)")
+
+[00:38:19] 
+-- VIEW: CREATE VIEW [dbo].[vGetUncheckedChatsForModeration]
+WITH SCHEMABINDING
+AS
+SELECT ChatId, ChatMessage, TimeStampUtc
+FROM dbo.Chats 
+WHERE IsModerated = 0;
+
+[00:38:19] 
+-- ERROR executing: 
+CREATE VIEW [dbo].[vGetUncheckedChatsForModeration]
+WITH SCHEMABINDING
+AS
+SELECT ChatId, ChatMessage, TimeStampUtc
+FROM dbo.Chats 
+WHERE IsModerated = 0;
+-- ('42S01', "[42S01] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]There is already an object named 'vGetUncheckedChatsForModeration' in the database. (2714) (SQLExecDirectW)")
+
+[00:38:19] 
+-- VIEW: CREATE VIEW [dbo].[vGetUserChatFlagged]
+WITH SCHEMABINDING
+AS
+SELECT u.UserId, u.UserName, c.ChatId, c.ChatMessage, c.ChannelName, c.TimeStampUtc, c.IsFlagged, c.FlaggedReason
+FROM dbo.Chats c
+INNER JOIN dbo.Users u ON u.UserId = c.UserId
+AND c.IsFlagged = 1;
+
+[00:38:19] 
+-- ERROR executing: 
+CREATE VIEW [dbo].[vGetUserChatFlagged]
+WITH SCHEMABINDING
+AS
+SELECT u.UserId, u.UserName, c.ChatId, c.ChatMessage, c.ChannelName, c.TimeStampUtc, c.IsFlagged, c.FlaggedReason
+FROM dbo.Chats c
+INNER JOIN dbo.Users u ON u.UserId = c.UserId
+AND c.IsFlagged = 1;
+-- ('42S01', "[42S01] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]There is already an object named 'vGetUserChatFlagged' in the database. (2714) (SQLExecDirectW)")
+
+[00:38:19] 
+-- VIEW: CREATE VIEW [dbo].[vGetRecentConversation]
+WITH SCHEMABINDING
+AS
+SELECT u.UserName, c.ChatMessage, c.TimeStampUtc AS [UserTimestamp], cb.ResponseMessage AS [BotResponseMessage], cb.TimeStampUtc AS [BotTimestamp]
+FROM dbo.Chats c
+INNER JOIN dbo.Users u ON u.UserId = c.UserId
+INNER JOIN dbo.ChatBotResponse cb ON cb.ChatId = c.ChatId
+WHERE ChannelName = 'bsoverns'
+AND c.IsFlagged = 0 
+AND c.TimeStampUtc >= DATEADD(MINUTE, -30, GETUTCDATE());
+
+[00:38:19] 
+-- ERROR executing: 
+CREATE VIEW [dbo].[vGetRecentConversation]
+WITH SCHEMABINDING
+AS
+SELECT u.UserName, c.ChatMessage, c.TimeStampUtc AS [UserTimestamp], cb.ResponseMessage AS [BotResponseMessage], cb.TimeStampUtc AS [BotTimestamp]
+FROM dbo.Chats c
+INNER JOIN dbo.Users u ON u.UserId = c.UserId
+INNER JOIN dbo.ChatBotResponse cb ON cb.ChatId = c.ChatId
+WHERE ChannelName = 'bsoverns'
+AND c.IsFlagged = 0 
+AND c.TimeStampUtc >= DATEADD(MINUTE, -30, GETUTCDATE());
+-- ('42S01', "[42S01] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]There is already an object named 'vGetRecentConversation' in the database. (2714) (SQLExecDirectW)")
+
+[00:38:19] 
+-- VIEW: CREATE VIEW [dbo].[vGetBotStatus]
+WITH SCHEMABINDING
+AS
+	SELECT BotName, IsLive
+	FROM [dbo].[BotStatus];
+
+[00:38:19] 
+-- ERROR executing: 
+CREATE VIEW [dbo].[vGetBotStatus]
+WITH SCHEMABINDING
+AS
+	SELECT BotName, IsLive
+	FROM [dbo].[BotStatus];
+-- ('42S01', "[42S01] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]There is already an object named 'vGetBotStatus' in the database. (2714) (SQLExecDirectW)")
+
+[00:38:19] 
+-- VIEW: CREATE VIEW [dbo].[vGetModerationActions]
+AS
+SELECT 'Warning' AS [Type], UserId, WarningReason AS [Reason] FROM dbo.Warnings WHERE IsComplete = 0
+UNION ALL
+SELECT 'Timeout' AS [Type], UserId, TimeoutReason AS [Reason] FROM dbo.Timeouts WHERE IsComplete = 0
+UNION ALL
+SELECT 'Ban' AS [Type], UserId, BannedReason AS [Reason] FROM dbo.Bans WHERE IsComplete = 0
+
+[00:38:19] 
+-- ERROR executing: 
+CREATE VIEW [dbo].[vGetModerationActions]
+AS
+SELECT 'Warning' AS [Type], UserId, WarningReason AS [Reason] FROM dbo.Warnings WHERE IsComplete = 0
+UNION ALL
+SELECT 'Timeout' AS [Type], UserId, TimeoutReason AS [Reason] FROM dbo.Timeouts WHERE IsComplete = 0
+UNION ALL
+SELECT 'Ban' AS [Type], UserId, BannedReason AS [Reason] FROM dbo.Bans WHERE IsComplete = 0
+-- ('42S01', "[42S01] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]There is already an object named 'vGetModerationActions' in the database. (2714) (SQLExecDirectW)")
+

@@ -11,7 +11,7 @@
   [FlaggedReason] VARCHAR(500) NULL,
   [IsTextToSpeech] BIT NOT NULL CONSTRAINT [DF_Chats_IsTextToSpeech] DEFAULT 0,
   [TtsCompletedTimestampUtc] DATETIME NULL,
-  [IsTtsComplete] BIT NOT NULL CONSTRAINT [DF_Chats_IsComplete] DEFAULT 0
+  [IsTtsComplete] BIT NOT NULL CONSTRAINT [DF_Chats_IsComplete] DEFAULT 0,
   CONSTRAINT [PK_Chats_ChatId] PRIMARY KEY CLUSTERED ([ChatId] ASC)
 );
 GO

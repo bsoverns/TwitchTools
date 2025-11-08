@@ -30,13 +30,20 @@ namespace TwitchTools
         List<TwitchUser> _twitchUsers = new List<TwitchUser>();
         List<TwitchUserChat> _twitchUserChats = new List<TwitchUserChat>();
         List<string> _channelNames = new List<string>() { "ALL" };
-        string botName = "bsoverns"; // This will need to be made configurable if I start using different bots and maybe changed to an array or something
+        string botName = "bsoverns_bot"; // This will need to be made configurable if I start using different bots and maybe changed to an array or something
 
         public MainWindow()
         {
             InitializeComponent();            
             //Speak(_defaultVoice, @"This is the loading alert voice for the Twitch Tools to make sure they are working");
             LoadSettings();
+        }
+
+        private void SqlAccessMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            var sqlWindow = new SqlConnectionWindow(); // this matches your x:Class="ActivateVisit.SqlAccess"
+            sqlWindow.Owner = this;
+            sqlWindow.ShowDialog();
         }
 
         private void Speak(string Voice, string Message)
@@ -54,7 +61,7 @@ namespace TwitchTools
             LoadSqlSettings();
             FirstStartTimers();
             LoadDefaultChannel();
-            GetBotStatus();
+            //GetBotStatus();
         }
 
         private void LoadSqlSettings()
@@ -107,15 +114,15 @@ namespace TwitchTools
             cmbChannelSelect.SelectedItem = LoadDefaultChannel;
         }
 
-        private void GetBotStatus()
-        {
-            SQLProcess sqlProcess = new SQLProcess();
-            bool botStatus = sqlProcess.GetBotStatus(botName, SQLConnectDb);
-            if (botStatus)
-                StatusToggle.IsChecked = true;
-            else
-                StatusToggle.IsChecked = false;
-        }
+        //private void GetBotStatus()
+        //{
+        //    SQLProcess sqlProcess = new SQLProcess();
+        //    bool botStatus = sqlProcess.GetBotStatus(botName, SQLConnectDb);
+        //    if (botStatus)
+        //        StatusToggle.IsChecked = true;
+        //    else
+        //        StatusToggle.IsChecked = false;
+        //}
 
         #endregion Loaders
 

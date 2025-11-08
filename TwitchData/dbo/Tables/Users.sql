@@ -1,7 +1,7 @@
 ﻿CREATE TABLE [dbo].[Users]
 (
   [UserId] INT IDENTITY(1, 1) NOT NULL,
-  [TwitchUserId] VARCHAR(50) NULL,
+  [TwitchUserId] VARCHAR(500) NULL,
   [UserName] VARCHAR(50) NOT NULL,
   [FirstInteractionDateTimeUtc] DATETIME NOT NULL CONSTRAINT [DF_Users_FirstInteractionDateTimeUtc] DEFAULT GETUTCDATE(),
   [LastInteractionDateTimeUtc] DATETIME,

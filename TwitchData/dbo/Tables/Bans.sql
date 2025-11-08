@@ -6,12 +6,13 @@
   [BannedTimestampUtc] DATETIME NOT NULL CONSTRAINT [DF_Bans_BannedTimestampUtc] DEFAULT GETUTCDATE(),
   [BannedReason] VARCHAR(500),
   [IsActive] BIT NOT NULL CONSTRAINT [DF_Bans_IsActive] DEFAULT 1,
+  [IsComplete] BIT NOT NULL CONSTRAINT [DF_Bans_IsComplete] DEFAULT 0,
   CONSTRAINT [PK_Bans_BanId] PRIMARY KEY CLUSTERED ([BanId] ASC)
 );
 GO
 
 CREATE NONCLUSTERED INDEX [IX_Bans_UserId]
 ON [dbo].[Bans] ([UserId] ASC)
-INCLUDE ([BannedBy], [BannedReason], [IsActive])
+INCLUDE ([BannedBy], [BannedReason], [IsActive], [IsComplete])
 WITH (ONLINE = ON);
 GO
