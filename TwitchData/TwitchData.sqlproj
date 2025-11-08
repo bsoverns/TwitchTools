@@ -142,6 +142,7 @@
     <Build Include="dbo\Tables\BotStatus.sql" />
     <Build Include="dbo\Views\vGetBotStatus.sql" />
     <Build Include="dbo\StoredProcedures\UpsertBotStatus.sql" />
+    <Build Include="dbo\Views\vGetModerationActions.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Scripts\PostDeployment.sql" />
