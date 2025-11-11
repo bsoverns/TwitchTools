@@ -56,9 +56,11 @@ BEGIN
             ROLLBACK TRANSACTION;
         END
 
-        DECLARE @ErrorMessage NVARCHAR(4000) = ERROR_MESSAGE();
-        DECLARE @ErrorSeverity INT = ERROR_SEVERITY();
+        DECLARE 
+            @ErrorMessage NVARCHAR(4000) = ERROR_MESSAGE(),
+            @ErrorSeverity INT = ERROR_SEVERITY();
         DECLARE @ErrorState INT = ERROR_STATE();
+
         EXEC [dbo].[InsertErrorTrackInfo] 'InsertTimeout', @ErrorMessage;
         RAISERROR (@ErrorMessage, @ErrorSeverity, @ErrorState);
     END CATCH

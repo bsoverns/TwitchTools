@@ -20,10 +20,9 @@ namespace TwitchTools
         string _GetUser = @"SELECT * 
 FROM [dbo].[vGetUser]";
 
-        string _GetUserChat = @"SELECT * FROM [dbo].[vGetUserChat] WITH(NOLOCk) WHERE TimeStampUtc >= DATEADD(HOUR, -24, GETUTCDATE())";
+        string _GetUserChat = @"SELECT * FROM [dbo].[vGetUserChat] WHERE TimeStampUtc >= DATEADD(HOUR, -24, GETUTCDATE())";
 
-        string _GetUserChatFlagged = @"SELECT *
-FROM [dbo].[vGetUserChatFlagged]";
+        string _GetUserChatFlagged = @"SELECT * FROM [dbo].[vGetUserChatFlagged]";
 
         string _GetUnModeratedChat = @"SELECT TOP 100 ChatId, ChatMessage FROM [dbo].[vGetUncheckedChatsForModeration] ORDER BY TimeStampUtc";
 

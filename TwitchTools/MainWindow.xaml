@@ -144,11 +144,11 @@
                                     <Border Width="10"/>
 
                                     
-                                    <ToggleButton x:Name="StatusToggle"
+                                    <!--<ToggleButton x:Name="StatusToggle"
                                                   ToolTip="Toggle status on/off"
                                                   Checked="StatusToggle_Checked"
                                                   Unchecked="StatusToggle_Unchecked"/>
-                                    <Border Width="10"/>
+                                    <Border Width="10"/>-->
                                 </StackPanel>
                             </Grid>
                         </GroupBox>

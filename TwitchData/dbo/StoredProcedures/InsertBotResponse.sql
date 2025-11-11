@@ -55,10 +55,12 @@ BEGIN
         SELECT @ChatBotResponseId AS ChatBotResponseId;
     END TRY
     BEGIN CATCH
-        DECLARE @ErrorMessage NVARCHAR(4000) = ERROR_MESSAGE();
-        DECLARE @ErrorSeverity INT = ERROR_SEVERITY();
-        DECLARE @ErrorState INT = ERROR_STATE();
+        DECLARE 
+            @ErrorMessage NVARCHAR(4000) = ERROR_MESSAGE(),
+            @ErrorSeverity INT = ERROR_SEVERITY(),
+            @ErrorState INT = ERROR_STATE();
         RAISERROR (@ErrorMessage, @ErrorSeverity, @ErrorState);
+
         EXEC [dbo].[InsertErrorTrackInfo] 'InsertBotResponse', @ErrorMessage;
     END CATCH
 END;
