@@ -1,7 +1,6 @@
 ﻿CREATE VIEW [dbo].[vGetUncheckedChatsForModeration]
-WITH SCHEMABINDING
 AS
 SELECT ChatId, ChatMessage, TimeStampUtc
-FROM dbo.Chats 
+FROM dbo.Chats WITH(NOLOCK)
 WHERE IsModerated = 0;
 GO

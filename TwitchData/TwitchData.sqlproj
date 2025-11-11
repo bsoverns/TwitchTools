@@ -143,6 +143,10 @@
     <Build Include="dbo\Views\vGetBotStatus.sql" />
     <Build Include="dbo\StoredProcedures\UpsertBotStatus.sql" />
     <Build Include="dbo\Views\vGetModerationActions.sql" />
+    <Build Include="dbo\Tables\ChatResponseQueue.sql" />
+    <Build Include="dbo\StoredProcedures\InsertChatResponseQueue.sql" />
+    <Build Include="dbo\StoredProcedures\UpdateChatResponseQueue.sql" />
+    <Build Include="dbo\Views\vGetPendingBotChat.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Scripts\PostDeployment.sql" />
