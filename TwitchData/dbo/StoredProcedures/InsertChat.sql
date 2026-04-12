@@ -52,8 +52,8 @@ BEGIN
             @ErrorMessage NVARCHAR(4000) = ERROR_MESSAGE(),
             @ErrorSeverity INT = ERROR_SEVERITY(),
             @ErrorState INT = ERROR_STATE();
+        
         RAISERROR (@ErrorMessage, @ErrorSeverity, @ErrorState);
-
         EXEC [dbo].[InsertErrorTrackInfo] 'InsertChat', @ErrorMessage;
     END CATCH
 END;
