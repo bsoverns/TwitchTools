@@ -1,2 +1,36 @@
+# Build output
 [Bb]in/
 [Oo]bj/
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# NuGet
+packages/
+*.nupkg
+
+# SQL Server Data Tools (SSDT) - generated/binary files
+*.dbmdl
+*.jfm
+
+# DACPAC publish profiles (machine-specific connection strings)
+*.publish.xml
+
+# Secrets and local config
+SECRETS.py
+*.env
+secrets.*
+
+# Log files
+TwitchData/Logs/
+*.log
+*.txt.log
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
