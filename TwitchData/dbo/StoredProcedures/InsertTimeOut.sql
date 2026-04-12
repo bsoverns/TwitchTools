@@ -58,8 +58,8 @@ BEGIN
 
         DECLARE 
             @ErrorMessage NVARCHAR(4000) = ERROR_MESSAGE(),
-            @ErrorSeverity INT = ERROR_SEVERITY();
-        DECLARE @ErrorState INT = ERROR_STATE();
+            @ErrorSeverity INT = ERROR_SEVERITY(),
+            @ErrorState INT = ERROR_STATE();
 
         EXEC [dbo].[InsertErrorTrackInfo] 'InsertTimeout', @ErrorMessage;
         RAISERROR (@ErrorMessage, @ErrorSeverity, @ErrorState);

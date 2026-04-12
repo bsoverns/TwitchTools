@@ -104,7 +104,6 @@
     <None Include="Scripts\UnitTests\InsertBanUserId.UnitTest.sql" />
     <None Include="Scripts\CleanUp\CleanUpTestData.Cleanup.sql" />
     <None Include="Scripts\UnitTests\InsertErrorTracking.UnitTest.sql" />
-    <None Include="TwitchData_1.publish.xml" />
     <None Include="Scripts\Seeds\TimestampTrack.Seed.sql" />
   </ItemGroup>
   <ItemGroup>
